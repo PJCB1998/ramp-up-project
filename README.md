@@ -1,2 +1,2 @@
-# ramp-up-proyect
-Ramp Up Proyect 
+# ramp-up-project
+Ramp Up Project 
