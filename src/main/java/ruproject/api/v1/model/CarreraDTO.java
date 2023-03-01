@@ -1,7 +1,6 @@
 package ruproject.api.v1.model;
 
 import lombok.Data;
-import ruproject.domain.Contenido;
 import ruproject.domain.Materia;
 
 import java.util.List;
