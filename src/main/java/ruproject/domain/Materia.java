@@ -1,20 +1,23 @@
 package ruproject.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @Entity
+@Table(name="materias")
 public class Materia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column
     private String name;
-    private List<Contenido> contenidoList;
+    @OneToMany(mappedBy = "materia")
+    private List<Contenido> contenidos = new ArrayList<>();
+    @ManyToMany
+    private List<Materia> carreras = new ArrayList<>();
 
 }
