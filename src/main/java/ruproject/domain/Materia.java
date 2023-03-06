@@ -13,7 +13,7 @@ public class Materia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column
+    @Column(name="name")
     private String name;
     @OneToMany(mappedBy = "materia")
     private List<Contenido> contenidos = new ArrayList<>();
