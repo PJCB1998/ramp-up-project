@@ -11,5 +11,5 @@ public class ContenidoDTO {
     private List<String> libros = new ArrayList<>();
     private List<String> examenes = new ArrayList<>();
     private List<String> cursos = new ArrayList<>();
-    private Materia materia;
+    private MateriaDTO materia;
 }

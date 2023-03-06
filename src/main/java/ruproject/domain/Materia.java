@@ -18,6 +18,9 @@ public class Materia {
     @OneToMany(mappedBy = "materia")
     private List<Contenido> contenidos = new ArrayList<>();
     @ManyToMany
-    private List<Materia> carreras = new ArrayList<>();
+    @JoinTable(name="carreras_materias",
+        joinColumns = @JoinColumn(name="materias_id",referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name="carreras_id",referencedColumnName = "id"))
+    private List<Carrera> carreras = new ArrayList<>();
 
 }

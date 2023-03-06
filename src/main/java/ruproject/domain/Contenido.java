@@ -22,5 +22,6 @@ public class Contenido {
     @Column
     private List<String> cursos = new ArrayList<>();
     @ManyToOne
+    @JoinColumn(name="materia_id")
     private Materia materia;
 }

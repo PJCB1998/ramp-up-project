@@ -6,7 +6,6 @@ import ruproject.api.v1.mapper.CarreraMapper;
 import ruproject.api.v1.model.CarreraDTO;
 import ruproject.domain.Carrera;
 import ruproject.repositories.CarreraRepository;
-
 import java.util.List;
 import java.util.stream.Collectors;
 

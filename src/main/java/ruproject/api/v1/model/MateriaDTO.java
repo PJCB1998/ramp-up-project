@@ -11,6 +11,6 @@ import java.util.List;
 public class MateriaDTO {
     private Long id;
     private String name;
-    private List<Contenido> contenidos = new ArrayList<>();
-    private List<Materia> carreras = new ArrayList<>();
+    private List<ContenidoDTO> contenidos = new ArrayList<>();
+    private List<CarreraDTO> carreras = new ArrayList<>();
 }

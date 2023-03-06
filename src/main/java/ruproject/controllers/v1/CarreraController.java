@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ruproject.api.v1.model.CarreraDTO;
 import ruproject.api.v1.model.CarreraListDTO;
 import ruproject.domain.Carrera;
+import ruproject.domain.Materia;
 import ruproject.services.CarreraService;
 
 import java.util.UUID;
@@ -40,7 +41,7 @@ public class CarreraController {
     @PutMapping("{name}/")
     public ResponseEntity<CarreraDTO> updateCarrera(@PathVariable String name, @RequestBody Carrera carrera) {
         if (carreraService.existsByName(name)) {
-            return new ResponseEntity<>(carreraService.saveCarrera(carrera), HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(carreraService.updateCarera(carrera), HttpStatus.ACCEPTED);
         }
         throw new IllegalArgumentException("Carrera with name " + name + "not found");
     }
