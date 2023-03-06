@@ -10,5 +10,5 @@ public interface CarreraRepository extends JpaRepository<Carrera,Long> {
 
     Boolean existsByName(String name);
 
-    Carrera deleteByName(String name);
+    void deleteByName(String name);
 }

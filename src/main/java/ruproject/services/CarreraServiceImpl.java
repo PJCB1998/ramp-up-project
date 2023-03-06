@@ -9,7 +9,7 @@ import ruproject.repositories.CarreraRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
-@Transactional
+
 @Service
 public class CarreraServiceImpl implements CarreraService {
 
@@ -52,8 +52,9 @@ public class CarreraServiceImpl implements CarreraService {
     }
 
     @Override
-    public CarreraDTO deleteCarrera(String name) {
-        return carreraMapper.carreraToCarreaDTO(carreraRepository.deleteByName(name));
+    @Transactional
+    public void deleteCarrera(String name) {
+        carreraRepository.deleteByName(name);
     }
 
 

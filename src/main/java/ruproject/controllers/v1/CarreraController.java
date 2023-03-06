@@ -46,9 +46,9 @@ public class CarreraController {
     }
 
     @DeleteMapping("{name}/")
-    public ResponseEntity<CarreraDTO> deleteCarrera(@PathVariable String name) {
-
-        return new ResponseEntity<>(carreraService.deleteCarrera(name),HttpStatus.NO_CONTENT);
+    public ResponseEntity<HttpStatus> deleteCarrera(@PathVariable String name) {
+        carreraService.deleteCarrera(name);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }

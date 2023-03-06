@@ -11,7 +11,6 @@ import ruproject.domain.Carrera;
 import java.util.List;
 
 
-@Transactional
 @Service
 public interface CarreraService {
     List<CarreraDTO> getAllCarreras();
@@ -19,5 +18,5 @@ public interface CarreraService {
     CarreraDTO saveCarrera(Carrera carrera);
     CarreraDTO updateCarera(Carrera carrera);
     Boolean existsByName(String name);
-    CarreraDTO deleteCarrera(String name);
+    void deleteCarrera(String name);
 }
