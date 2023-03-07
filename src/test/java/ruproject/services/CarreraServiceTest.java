@@ -1,5 +1,6 @@
 package ruproject.services;
 
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -11,13 +12,14 @@ import ruproject.repositories.CarreraRepository;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class CarreraServiceTest {
 
@@ -112,6 +114,12 @@ class CarreraServiceTest {
     @Test
     void deleteCarrera() {
 
+        Carrera carrera = new Carrera();
+        carrera.setName(NAME);
+
+        carreraService.deleteCarrera(NAME);
+
+        verify(carreraRepository, times(1)).deleteByName(NAME);
 
     }
 }
