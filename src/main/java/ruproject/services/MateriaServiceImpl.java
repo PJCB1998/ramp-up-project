@@ -3,7 +3,6 @@ package ruproject.services;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import ruproject.api.v1.mapper.MateriaMapper;
-import ruproject.api.v1.model.CarreraDTO;
 import ruproject.api.v1.model.MateriaDTO;
 import ruproject.domain.Materia;
 import ruproject.repositories.MateriaRepositroy;
@@ -38,13 +37,19 @@ public class MateriaServiceImpl implements MateriaService {
     }
 
     @Override
-    public MateriaDTO saveMateria(Materia materia) {
+    public MateriaDTO saveMateria(MateriaDTO materiaDTO) {
+        Materia materia = materiaMapper.materiaDTOToMateria(materiaDTO);
         return materiaMapper.materiaToMateriaDTO(materiaRepositroy.save(materia));
+
     }
 
     @Override
-    public MateriaDTO updateMateria(Materia materia) {
+    public MateriaDTO updateMateria(String name, MateriaDTO materiaDTO) {
+        Materia materia = materiaMapper.materiaDTOToMateria(materiaDTO);
+        materia.setName(name);
         return materiaMapper.materiaToMateriaDTO(materiaRepositroy.save(materia));
+
+
     }
 
     @Override
