@@ -11,4 +11,6 @@ public interface CarreraMapper {
 
     CarreraDTO carreraToCarreaDTO(Carrera carrear);
 
+    Carrera carreraDTOtoCarrera(CarreraDTO carreraDTO);
+
 }

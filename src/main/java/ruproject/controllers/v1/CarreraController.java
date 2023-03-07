@@ -23,33 +23,36 @@ public class CarreraController {
     }
 
     @GetMapping
-    public ResponseEntity<CarreraListDTO> getAllCarreras(){
-        return new ResponseEntity<CarreraListDTO>(
-                new CarreraListDTO(carreraService.getAllCarreras()), HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public CarreraListDTO getAllCarreras(){
+        return new CarreraListDTO(carreraService.getAllCarreras());
     }
 
     @GetMapping("{name}/")
-    public ResponseEntity<CarreraDTO> getCarreraByName(@PathVariable String name){
-        return new ResponseEntity<CarreraDTO>(carreraService.getCarreraByName(name),HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public CarreraDTO getCarreraByName(@PathVariable String name){
+        return carreraService.getCarreraByName(name);
     }
 
     @PostMapping()
-    public ResponseEntity<CarreraDTO> createCarrera(@RequestBody Carrera carrera) {
-        return new ResponseEntity<>(carreraService.saveCarrera(carrera), HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public CarreraDTO createCarrera(@RequestBody CarreraDTO carrera) {
+        return carreraService.saveCarrera(carrera);
     }
 
     @PutMapping("{name}/")
-    public ResponseEntity<CarreraDTO> updateCarrera(@PathVariable String name, @RequestBody Carrera carrera) {
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public CarreraDTO updateCarrera(@PathVariable String name, @RequestBody CarreraDTO carreraDTO) {
         if (carreraService.existsByName(name)) {
-            return new ResponseEntity<>(carreraService.updateCarera(carrera), HttpStatus.ACCEPTED);
+            return carreraService.updateCarera(name,carreraDTO);
         }
-        throw new IllegalArgumentException("Carrera with name " + name + "not found");
+        throw new IllegalArgumentException("Carrera with name " + name + " not found");
     }
 
     @DeleteMapping("{name}/")
-    public ResponseEntity<HttpStatus> deleteCarrera(@PathVariable String name) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCarrera(@PathVariable String name) {
         carreraService.deleteCarrera(name);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }

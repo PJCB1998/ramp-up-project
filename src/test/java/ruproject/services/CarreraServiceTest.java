@@ -20,7 +20,6 @@ import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
-
 class CarreraServiceTest {
 
 
@@ -68,7 +67,7 @@ class CarreraServiceTest {
 
     @Test
     void saveCarrera() {
-        Carrera carrera = new Carrera();
+        CarreraDTO carrera = new CarreraDTO();
         carrera.setName(NAME);
         carrera.setId(ID);
         when(carreraRepository.save(any(Carrera.class))).then(returnsFirstArg());
@@ -85,16 +84,16 @@ class CarreraServiceTest {
     @Test
     void updateCarera() {
 
-        Carrera carrera = new Carrera();
-        carrera.setName(NAME);
-        carrera.setId(ID);
+        CarreraDTO carreraDTO = new CarreraDTO();
+        carreraDTO.setName(NAME);
+        carreraDTO.setId(ID);
         when(carreraRepository.save(any(Carrera.class))).then(returnsFirstArg());
 
 
-        CarreraDTO carreraDTO = carreraService.updateCarera(carrera);
+        CarreraDTO carreraDTO2 = carreraService.updateCarera(NAME,carreraDTO);
 
-        assertNotNull(carreraDTO.getId());
-        assertEquals(NAME,carreraDTO.getName());
+        assertNotNull(carreraDTO2.getId());
+        assertEquals(NAME,carreraDTO2.getName());
     }
 
     @Test

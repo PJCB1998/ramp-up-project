@@ -35,12 +35,15 @@ public class CarreraServiceImpl implements CarreraService {
     }
 
     @Override
-    public CarreraDTO saveCarrera(Carrera carrera) {
+    public CarreraDTO saveCarrera(CarreraDTO carreraDTO) {
+        Carrera carrera = carreraMapper.carreraDTOtoCarrera(carreraDTO);
         return carreraMapper.carreraToCarreaDTO(carreraRepository.save(carrera));
     }
 
     @Override
-    public CarreraDTO updateCarera(Carrera carrera) {
+    public CarreraDTO updateCarera(String name, CarreraDTO carreraDTO) {
+        Carrera carrera = carreraMapper.carreraDTOtoCarrera(carreraDTO);
+        carrera.setName(name);
         return carreraMapper.carreraToCarreaDTO(carreraRepository.save(carrera));
     }
 
