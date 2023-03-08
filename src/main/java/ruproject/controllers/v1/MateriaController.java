@@ -37,10 +37,9 @@ public class MateriaController {
     @PutMapping("{name}/")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public MateriaDTO updateMateria(@PathVariable String name, @RequestBody MateriaDTO materia) {
-        if (materiaService.existsByName(name)) {
-            return materiaService.updateMateria(name,materia);
-        }
-        throw new IllegalArgumentException("Materia with name " + name + " not found");
+
+        return materiaService.updateMateria(name,materia);
+
     }
 
     @DeleteMapping("{name}/")
