@@ -42,14 +42,16 @@ public class CarreraServiceImpl implements CarreraService {
 
     @Override
     public CarreraDTO updateCarera(String name, CarreraDTO carreraDTO) {
+        if((existsByName(name))){
         Carrera carrera = carreraMapper.carreraDTOtoCarrera(carreraDTO);
         carrera.setName(name);
         return carreraMapper.carreraToCarreaDTO(carreraRepository.save(carrera));
+        }
+        throw new IllegalArgumentException("Carrera with name:"+ name + " not found");
     }
 
     @Override
     public Boolean existsByName(String name) {
-
         return carreraRepository.existsByName(name);
     }
 

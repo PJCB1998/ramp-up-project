@@ -3,7 +3,6 @@ package ruproject.services;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import ruproject.api.v1.mapper.MateriaMapper;
-import ruproject.api.v1.model.CarreraDTO;
 import ruproject.api.v1.model.MateriaDTO;
 import ruproject.domain.Materia;
 import ruproject.repositories.MateriaRepositroy;

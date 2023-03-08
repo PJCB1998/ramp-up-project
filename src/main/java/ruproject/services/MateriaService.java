@@ -1,9 +1,7 @@
 package ruproject.services;
 
 import org.springframework.stereotype.Service;
-import ruproject.api.v1.model.CarreraDTO;
 import ruproject.api.v1.model.MateriaDTO;
-import ruproject.domain.Carrera;
 import ruproject.domain.Materia;
 
 

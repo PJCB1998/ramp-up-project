@@ -43,10 +43,7 @@ public class CarreraController {
     @PutMapping("{name}/")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public CarreraDTO updateCarrera(@PathVariable String name, @RequestBody CarreraDTO carreraDTO) {
-        if (carreraService.existsByName(name)) {
-            return carreraService.updateCarera(name,carreraDTO);
-        }
-        throw new IllegalArgumentException("Carrera with name " + name + " not found");
+        return carreraService.updateCarera(name,carreraDTO);
     }
 
     @DeleteMapping("{name}/")

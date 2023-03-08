@@ -2,11 +2,7 @@ package ruproject.services;
 
 
 
-import jakarta.transaction.Transactional;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import ruproject.api.v1.model.CarreraDTO;
-import ruproject.domain.Carrera;
 
 import java.util.List;
 
