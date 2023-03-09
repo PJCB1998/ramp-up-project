@@ -37,13 +37,21 @@ public class MateriaServiceImpl implements MateriaService {
     }
 
     @Override
-    public MateriaDTO saveMateria(Materia materia) {
+    public MateriaDTO saveMateria(MateriaDTO materiaDTO) {
+        Materia materia = materiaMapper.materiaDTOToMateria(materiaDTO);
         return materiaMapper.materiaToMateriaDTO(materiaRepositroy.save(materia));
+
     }
 
     @Override
-    public MateriaDTO updateMateria(Materia materia) {
-        return materiaMapper.materiaToMateriaDTO(materiaRepositroy.save(materia));
+    public MateriaDTO updateMateria(String name, MateriaDTO materiaDTO) {
+        if(existsByName(name)) {
+            Materia materia = materiaMapper.materiaDTOToMateria(materiaDTO);
+            materia.setName(name);
+            return materiaMapper.materiaToMateriaDTO(materiaRepositroy.save(materia));
+        }
+        throw new IllegalArgumentException("Materia with name: "+ name + " not found");
+
     }
 
     @Override

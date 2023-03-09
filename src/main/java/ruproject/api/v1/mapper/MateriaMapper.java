@@ -13,4 +13,6 @@ public interface MateriaMapper {
 
     MateriaDTO materiaToMateriaDTO(Materia materia);
 
+    Materia materiaDTOToMateria(MateriaDTO materiaDTO);
+
 }

@@ -1,12 +1,9 @@
 package ruproject.controllers.v1;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ruproject.api.v1.model.MateriaDTO;
 import ruproject.api.v1.model.MateriaListDTO;
-import ruproject.domain.Materia;
 import ruproject.services.MateriaService;
 
 @RestController
@@ -20,32 +17,34 @@ public class MateriaController {
     }
 
     @GetMapping
-    public ResponseEntity<MateriaListDTO> getAllMaterias(){
-        return new ResponseEntity<MateriaListDTO>(
-                new MateriaListDTO(materiaService.getAllMaterias()), HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public MateriaListDTO getAllMaterias(){
+        return new MateriaListDTO(materiaService.getAllMaterias());
     }
 
     @GetMapping("{name}/")
-    public ResponseEntity<MateriaDTO> getMateriaByName(@PathVariable String name){
-        return new ResponseEntity<MateriaDTO>(materiaService.getMateriaByName(name),HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public MateriaDTO getMateriaByName(@PathVariable String name){
+        return materiaService.getMateriaByName(name);
     }
 
     @PostMapping()
-    public ResponseEntity<MateriaDTO> createMateria(@RequestBody Materia materia) {
-        return new ResponseEntity<>(materiaService.saveMateria(materia), HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public MateriaDTO createMateria(@RequestBody MateriaDTO materia) {
+        return materiaService.saveMateria(materia);
     }
 
     @PutMapping("{name}/")
-    public ResponseEntity<MateriaDTO> updateMateria(@PathVariable String name, @RequestBody Materia materia) {
-        if (materiaService.existsByName(name)) {
-            return new ResponseEntity<>(materiaService.saveMateria(materia), HttpStatus.ACCEPTED);
-        }
-        throw new IllegalArgumentException("Materia with name " + name + "not found");
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public MateriaDTO updateMateria(@PathVariable String name, @RequestBody MateriaDTO materia) {
+
+        return materiaService.updateMateria(name,materia);
+
     }
 
     @DeleteMapping("{name}/")
-    public ResponseEntity<HttpStatus> deleteMateria(@PathVariable String name) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteMateria(@PathVariable String name) {
         materiaService.deleteMateria(name);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
