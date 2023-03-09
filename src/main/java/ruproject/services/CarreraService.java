@@ -11,7 +11,7 @@ public interface CarreraService {
     List<CarreraDTO> getAllCarreras();
     CarreraDTO getCarreraByName(String name);
     CarreraDTO saveCarrera(CarreraDTO carreraDTO);
-    CarreraDTO updateCarera(String name, CarreraDTO carreraDTO);
+    CarreraDTO updateCarrera(String name, CarreraDTO carreraDTO);
     Boolean existsByName(String name);
     void deleteCarrera(String name);
 }

@@ -12,8 +12,6 @@ import ruproject.repositories.CarreraRepository;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -38,8 +36,8 @@ class CarreraServiceTest {
         carreraService = new CarreraServiceImpl(CarreraMapper.INSTANCE,carreraRepository);
     }
 
-    @Test
-    void getAllCarreras() {
+    @Test //Used to test getAllCarreras() Mehtod
+    void Add_3_Carreras_Returns_Number_Of_Carreras() {
 
         List<Carrera> carreras = Arrays.asList(new Carrera(), new Carrera(), new Carrera());
         when(carreraRepository.findAll()).thenReturn(carreras);
@@ -49,8 +47,8 @@ class CarreraServiceTest {
         assertEquals(3,carreraDTOS.size());
     }
 
-    @Test
-    void getCarreraByName() {
+    @Test // Used to test getCarreraByName()
+    void Add_Carrera_Returns_Same_Carrera() {
 
         Carrera carrera = new Carrera();
         carrera.setName(NAME);
@@ -65,8 +63,8 @@ class CarreraServiceTest {
 
     }
 
-    @Test
-    void saveCarrera() {
+    @Test //Used To test saveCarrera()
+    void Add_And_Save_Carrera_Returns_Same_Carrera_And_ID() {
         CarreraDTO carrera = new CarreraDTO();
         carrera.setName(NAME);
         carrera.setId(ID);
@@ -81,37 +79,39 @@ class CarreraServiceTest {
 
     }
 
-    @Test
-    void updateCarera() {
+    @Test //Used to test updateCarrera()
+    void Add_And_Update_Carrera_Retrun_Updated_Carrera_And_Same_ID() {
 
         CarreraDTO carreraDTO = new CarreraDTO();
         carreraDTO.setName(NAME);
         carreraDTO.setId(ID);
+
+
         when(carreraRepository.save(any(Carrera.class))).then(returnsFirstArg());
+        when(carreraRepository.existsByName(anyString())).thenReturn(true);
 
 
-        CarreraDTO carreraDTO2 = carreraService.updateCarera(NAME,carreraDTO);
+        CarreraDTO carreraDTO2 = carreraService.updateCarrera(NAME,carreraDTO);
 
         assertNotNull(carreraDTO2.getId());
         assertEquals(NAME,carreraDTO2.getName());
     }
 
-    @Test
-    void existsByName() {
+    @Test //Used to test existsByName()
+    void Add_Carrera_Search_By_Name_Returns_True_If_Found() {
 
         List<Carrera> carreras = Arrays.asList(new Carrera(), new Carrera(), new Carrera());
         carreras.get(0).setName(NAME);
-        Boolean exists = carreras.stream().filter(c -> c.getName().equals(NAME)).findFirst().isEmpty();
-        when(carreraRepository.existsByName(anyString())).thenReturn(exists);
+        when(carreraRepository.existsByName(anyString())).thenReturn(true);
 
         Boolean test = carreraService.existsByName(NAME);
 
-        assertFalse(test);
+        assertTrue(test);
 
     }
 
-    @Test
-    void deleteCarrera() {
+    @Test //Used to Test deleteCarrera()
+    void Delete_Carrera_Verrify_Delte_Times() {
 
         Carrera carrera = new Carrera();
         carrera.setName(NAME);

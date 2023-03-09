@@ -4,27 +4,18 @@ package ruproject.controllers.v1;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.security.RunAs;
-import org.aspectj.lang.annotation.Before;
-import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-
-
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import ruproject.api.v1.model.CarreraDTO;
-import ruproject.api.v1.model.MateriaDTO;
 import ruproject.services.CarreraService;
 
 
@@ -61,8 +52,8 @@ class CarreraControllerTest {
         this.mvc = MockMvcBuilders.standaloneSetup(carreraController).build();
     }
 
-    @Test
-    void getAllCarreras() throws Exception {
+    @Test // Used to test GET All Carreras
+    void Add_2_Carreras_Return_Carrera_Size_Http_200() throws Exception {
         CarreraDTO carrera1 = new CarreraDTO();
         carrera1.setName(NAME);
         carrera1.setId(1L);
@@ -83,8 +74,8 @@ class CarreraControllerTest {
 
     }
 
-    @Test
-    void getCarreraByName() throws Exception {
+    @Test //Used to test GET Carreras by Name
+    void Add_Carrera_Return_Same_Carrera_Name_Http_200() throws Exception {
 
         CarreraDTO carrera1 = new CarreraDTO();
         carrera1.setName(NAME);
@@ -102,8 +93,8 @@ class CarreraControllerTest {
 
     }
 
-    @Test
-    void createCarrera() throws Exception {
+    @Test // Used to test POST Carrera
+    void Add_Carrera_Return_Same_Carrera_Name_ID_Http_201() throws Exception {
         CarreraDTO carreraDTO = new CarreraDTO();
         carreraDTO.setId(1L);
         carreraDTO.setName(NAME);
@@ -126,8 +117,8 @@ class CarreraControllerTest {
 
     }
 
-    @Test
-    void updateCarrera() throws Exception {
+    @Test //Used to test PUT Carrera
+    void Add_Carrera_Retrun_Same_Carrera_Http_202() throws Exception {
 
         CarreraDTO carreraDTO = new CarreraDTO();
         carreraDTO.setId(1L);
@@ -139,7 +130,7 @@ class CarreraControllerTest {
 
         when(carreraService.existsByName(anyString())).thenReturn(true);
 
-        when(carreraService.updateCarera(anyString(),any(CarreraDTO.class))).thenReturn(returnDTO);
+        when(carreraService.updateCarrera(anyString(),any(CarreraDTO.class))).thenReturn(returnDTO);
 
         mvc.perform(MockMvcRequestBuilders
                         .put("/api/v1/carreras/Ingenieria/")
@@ -151,8 +142,8 @@ class CarreraControllerTest {
                 .andExpect(jsonPath("$.id",equalTo(1)));
     }
 
-    @Test
-    void deleteCarrera() throws Exception{
+    @Test // Used to test DELETE Carrera
+    void Delete_Carrera_Verify_deleteCarrera_Http_204() throws Exception{
         mvc.perform(MockMvcRequestBuilders
                 .delete("/api/v1/carreras/Ingenieria/")
                 .contentType(MediaType.APPLICATION_JSON))

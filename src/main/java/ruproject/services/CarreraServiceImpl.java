@@ -41,7 +41,7 @@ public class CarreraServiceImpl implements CarreraService {
     }
 
     @Override
-    public CarreraDTO updateCarera(String name, CarreraDTO carreraDTO) {
+    public CarreraDTO updateCarrera(String name, CarreraDTO carreraDTO) {
         if((existsByName(name))){
         Carrera carrera = carreraMapper.carreraDTOtoCarrera(carreraDTO);
         carrera.setName(name);
