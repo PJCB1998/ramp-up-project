@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 import ruproject.api.v1.model.MateriaDTO;
 
 
-
 import java.util.List;
 @Service
 public interface MateriaService {
