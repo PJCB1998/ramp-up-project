@@ -97,9 +97,6 @@ class MateriaServiceImplTest {
     @Test
     void Add_Materia_Retrun_True_If_Found() {
 
-        List<Materia> materias = Arrays.asList(new Materia(), new Materia(), new Materia());
-        materias.get(0).setName(NAME);
-
         when(materiaRepositroy.existsByName(anyString())).thenReturn(true);
 
         Boolean test = materiaService.existsByName(NAME);
