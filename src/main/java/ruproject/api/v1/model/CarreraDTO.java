@@ -9,6 +9,6 @@ import java.util.List;
 public class CarreraDTO {
     private Long id;
     private String name;
-    private List<Materia> materias = new ArrayList<>();
+    private List<MateriaDTO> materias = new ArrayList<>();
 
 }

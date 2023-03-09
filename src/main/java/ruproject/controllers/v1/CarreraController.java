@@ -1,11 +1,7 @@
 package ruproject.controllers.v1;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ruproject.api.v1.model.CarreraDTO;
 import ruproject.api.v1.model.CarreraListDTO;
 import ruproject.services.CarreraService;
@@ -21,13 +17,33 @@ public class CarreraController {
     }
 
     @GetMapping
-    public ResponseEntity<CarreraListDTO> getAllCarreras(){
-        return new ResponseEntity<CarreraListDTO>(
-                new CarreraListDTO(carreraService.getAllCarreras()), HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public CarreraListDTO getAllCarreras(){
+        return new CarreraListDTO(carreraService.getAllCarreras());
     }
 
-    @GetMapping("{name}")
-    public ResponseEntity<CarreraDTO> getCarreraByName(@PathVariable String name){
-        return new ResponseEntity<CarreraDTO>(carreraService.getCarreraByName(name),HttpStatus.OK);
+    @GetMapping("{name}/")
+    @ResponseStatus(HttpStatus.OK)
+    public CarreraDTO getCarreraByName(@PathVariable String name){
+        return carreraService.getCarreraByName(name);
     }
+
+    @PostMapping()
+    @ResponseStatus(HttpStatus.CREATED)
+    public CarreraDTO createCarrera(@RequestBody CarreraDTO carrera) {
+        return carreraService.saveCarrera(carrera);
+    }
+
+    @PutMapping("{name}/")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public CarreraDTO updateCarrera(@PathVariable String name, @RequestBody CarreraDTO carreraDTO) {
+        return carreraService.updateCarrera(name,carreraDTO);
+    }
+
+    @DeleteMapping("{name}/")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCarrera(@PathVariable String name) {
+        carreraService.deleteCarrera(name);
+    }
+
 }
