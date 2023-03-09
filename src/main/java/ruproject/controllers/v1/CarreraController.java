@@ -1,16 +1,10 @@
 package ruproject.controllers.v1;
 
-import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ruproject.api.v1.model.CarreraDTO;
 import ruproject.api.v1.model.CarreraListDTO;
-import ruproject.domain.Carrera;
-import ruproject.domain.Materia;
 import ruproject.services.CarreraService;
-
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/carreras/")
@@ -43,10 +37,7 @@ public class CarreraController {
     @PutMapping("{name}/")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public CarreraDTO updateCarrera(@PathVariable String name, @RequestBody CarreraDTO carreraDTO) {
-        if (carreraService.existsByName(name)) {
-            return carreraService.updateCarera(name,carreraDTO);
-        }
-        throw new IllegalArgumentException("Carrera with name " + name + " not found");
+        return carreraService.updateCarrera(name,carreraDTO);
     }
 
     @DeleteMapping("{name}/")
