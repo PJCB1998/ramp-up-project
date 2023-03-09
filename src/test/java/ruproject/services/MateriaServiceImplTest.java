@@ -36,7 +36,7 @@ class MateriaServiceImplTest {
     }
 
     @Test
-    void getAllMaterias() {
+    void Add_3_Materoas_Returns_Number_Of_Materias() {
 
         List<Materia> materias = Arrays.asList(new Materia(), new Materia(), new Materia());
         when(materiaRepositroy.findAll()).thenReturn(materias);
@@ -48,7 +48,7 @@ class MateriaServiceImplTest {
     }
 
     @Test
-    void getMateriaByName() {
+    void Add_Materia_Return_Same_Materia() {
 
         Materia materia = new Materia();
         materia.setName(NAME);
@@ -63,7 +63,7 @@ class MateriaServiceImplTest {
     }
 
     @Test
-    void saveMateria() {
+    void Add_Save_Materia_Return_Same_Materia_ID() {
 
         MateriaDTO materia = new MateriaDTO();
         materia.setName(NAME);
@@ -80,14 +80,14 @@ class MateriaServiceImplTest {
     }
 
     @Test
-    void updateMateria() {
+    void Add_Update_Materia_Return_Updated_Materia() {
 
         MateriaDTO materia = new MateriaDTO();
         materia.setName(NAME);
         materia.setId(ID);
 
         when(materiaRepositroy.save(any(Materia.class))).then(returnsFirstArg());
-
+        when(materiaRepositroy.existsByName(anyString())).thenReturn(true);
         MateriaDTO materiaDTO = materiaService.updateMateria(NAME,materia);
 
         assertEquals(ID,materiaDTO.getId());
@@ -95,21 +95,21 @@ class MateriaServiceImplTest {
     }
 
     @Test
-    void existsByName() {
+    void Add_Materia_Retrun_True_If_Found() {
 
         List<Materia> materias = Arrays.asList(new Materia(), new Materia(), new Materia());
         materias.get(0).setName(NAME);
-        Boolean exists = materias.stream().filter(c -> c.getName().equals(NAME)).findFirst().isEmpty();
-        when(materiaRepositroy.existsByName(anyString())).thenReturn(exists);
+
+        when(materiaRepositroy.existsByName(anyString())).thenReturn(true);
 
         Boolean test = materiaService.existsByName(NAME);
 
-        assertFalse(test);
+        assertTrue(test);
 
     }
 
     @Test
-    void deleteMateria() {
+    void Delete_Materia_Verify_deleteByName() {
 
         Materia materia = new Materia();
         materia.setName(NAME);

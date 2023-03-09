@@ -44,8 +44,8 @@ class MateriaControllerTest {
         this.mvc= MockMvcBuilders.standaloneSetup(materiaController).build();
     }
 
-    @Test
-    void getAllMaterias() throws Exception {
+    @Test //Test GET Materias
+    void Add_2_Materias_Return_Number_Of_Materias_Http_200() throws Exception {
         MateriaDTO materia1 = new MateriaDTO();
         materia1.setId(1L);
         materia1.setName(NAME);
@@ -65,8 +65,8 @@ class MateriaControllerTest {
                 .andExpect(jsonPath("$.materias",hasSize(2)));
     }
 
-    @Test
-    void getMateriaByName() throws Exception {
+    @Test // Test GET Materia Name
+    void Add_Materia_Retrun_Materia_Name_Http_200() throws Exception {
 
         MateriaDTO materiaDTO = new MateriaDTO();
         materiaDTO.setName(NAME);
@@ -82,8 +82,8 @@ class MateriaControllerTest {
                 .andExpect(jsonPath("$.name",equalTo(NAME)));
     }
 
-    @Test
-    void createMateria() throws Exception {
+    @Test // Test POST Materia
+    void Add_Save_Materia_Return_Materia_ID_Http_201() throws Exception {
 
         MateriaDTO materiaDTO = new MateriaDTO();
         materiaDTO.setId(1L);
@@ -106,8 +106,8 @@ class MateriaControllerTest {
 
     }
 
-    @Test
-    void updateMateria() throws Exception {
+    @Test // Test PUT Materia
+    void Add_Update_Materia_Return_Materia_Http_202() throws Exception {
 
         MateriaDTO materiaDTO = new MateriaDTO();
         materiaDTO.setId(1L);
@@ -132,8 +132,8 @@ class MateriaControllerTest {
 
     }
 
-    @Test
-    void deleteMateria() throws Exception{
+    @Test // Test DELETE Materia
+    void Delete_Materia_Verify_deleteMateria_Http_204() throws Exception{
 
         mvc.perform(MockMvcRequestBuilders
                 .delete("/api/v1/materias/Calculo/")
