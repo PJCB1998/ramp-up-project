@@ -100,8 +100,7 @@ class CarreraServiceTest {
     @Test //Used to test existsByName()
     void Add_Carrera_Search_By_Name_Returns_True_If_Found() {
 
-        List<Carrera> carreras = Arrays.asList(new Carrera(), new Carrera(), new Carrera());
-        carreras.get(0).setName(NAME);
+
         when(carreraRepository.existsByName(anyString())).thenReturn(true);
 
         Boolean test = carreraService.existsByName(NAME);
