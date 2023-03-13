@@ -1,9 +1,10 @@
 package ruproject.api.v1.model;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.Entity;
 import lombok.*;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,17 +13,15 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id")
-public class MateriaDTO {
-    private Long id;
-    private String name;
+public class LibroDTO {
 
+    private Long id;
+    private String titulo;
+    private String autor;
     private List<ContenidoDTO> contenidos = new ArrayList<>();
 
-
-    private List<CarreraDTO> carreras = new ArrayList<>();
 
 }

@@ -4,9 +4,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import ruproject.api.v1.mapper.CarreraMapper;
+import ruproject.api.v1.mapper.ContenidoMapper;
 import ruproject.api.v1.mapper.MateriaMapper;
 import ruproject.api.v1.model.MateriaDTO;
 import ruproject.domain.Materia;
+import ruproject.repositories.CarreraRepository;
 import ruproject.repositories.MateriaRepositroy;
 
 import java.util.Arrays;
@@ -28,11 +31,12 @@ class MateriaServiceImplTest {
 
     @Mock
     MateriaRepositroy materiaRepositroy;
+    CarreraRepository carreraRepository;
 
     @BeforeEach
     void setUp(){
         MockitoAnnotations.openMocks(this);
-        materiaService = new MateriaServiceImpl(MateriaMapper.INSTANCE,materiaRepositroy);
+        materiaService = new MateriaServiceImpl(MateriaMapper.INSTANCE,materiaRepositroy, CarreraMapper.INSTANCE, carreraRepository, ContenidoMapper.INSTANCE);
     }
 
     @Test

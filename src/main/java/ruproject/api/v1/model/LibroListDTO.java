@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class MateriaListDTO {
-    List<MateriaDTO> materias;
+public class LibroListDTO {
+
+    List<LibroDTO> libros;
 }
