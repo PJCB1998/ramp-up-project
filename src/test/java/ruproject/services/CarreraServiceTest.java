@@ -6,9 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import ruproject.api.v1.mapper.CarreraMapper;
+import ruproject.api.v1.mapper.MateriaMapper;
 import ruproject.api.v1.model.CarreraDTO;
 import ruproject.domain.Carrera;
 import ruproject.repositories.CarreraRepository;
+import ruproject.repositories.MateriaRepositroy;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,12 +30,12 @@ class CarreraServiceTest {
 
     @Mock
     CarreraRepository carreraRepository;
-    CarreraMapper carreraMapper;
+    MateriaRepositroy materiaRepositroy;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        carreraService = new CarreraServiceImpl(CarreraMapper.INSTANCE,carreraRepository);
+        carreraService = new CarreraServiceImpl(CarreraMapper.INSTANCE,carreraRepository, MateriaMapper.INSTANCE, materiaRepositroy);
     }
 
     @Test //Used to test getAllCarreras() Mehtod

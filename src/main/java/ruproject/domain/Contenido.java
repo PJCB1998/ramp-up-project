@@ -1,27 +1,37 @@
 package ruproject.domain;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.rmi.MarshalException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name="contenidos")
+@ToString(exclude = "libros")
+@EqualsAndHashCode(exclude = "libros")
+@Table(name="CONTENIDOS")
 public class Contenido {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column
-    private List<String> libros = new ArrayList<>();
-    @Column
+    @ManyToMany(fetch = FetchType.EAGER,cascade = { CascadeType.PERSIST,CascadeType.REMOVE})
+    @JoinTable(
+            name = "Contenido_Libors",
+            joinColumns = { @JoinColumn(name = "contenido_id") },
+            inverseJoinColumns = { @JoinColumn(name = "libro_id") }
+    )
+    private List<Libro> libros = new ArrayList<>();
+
     private List<String> examenes = new ArrayList<>();
-    @Column
+
     private List<String> cursos = new ArrayList<>();
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="materia_id")
     private Materia materia;
 }

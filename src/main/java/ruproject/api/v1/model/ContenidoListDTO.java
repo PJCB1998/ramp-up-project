@@ -1,12 +1,9 @@
 package ruproject.api.v1.model;
 
-
-
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import jakarta.persistence.Entity;
 import lombok.*;
-
 
 import java.util.List;
 
@@ -15,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class CarreraListDTO {
+public class ContenidoListDTO {
+    List<ContenidoDTO> contenidos;
 
-    List<CarreraDTO> carreras;
 }
