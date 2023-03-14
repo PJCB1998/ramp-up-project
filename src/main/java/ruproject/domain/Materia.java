@@ -1,26 +1,38 @@
 package ruproject.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 @Entity
-@Table(name="materias")
+@Table(name="MATERIAS")
 public class Materia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name="name")
+
     private String name;
-    @OneToMany(mappedBy = "materia")
+
+
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "materia")
     private List<Contenido> contenidos = new ArrayList<>();
-    @ManyToMany
-    @JoinTable(name="carreras_materias",
-        joinColumns = @JoinColumn(name="materias_id",referencedColumnName = "id"),
-        inverseJoinColumns = @JoinColumn(name="carreras_id",referencedColumnName = "id"))
+
+
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @ManyToMany(fetch = FetchType.EAGER,mappedBy = "materias")
     private List<Carrera> carreras = new ArrayList<>();
 
 }

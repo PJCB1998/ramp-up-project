@@ -9,6 +9,9 @@ import ruproject.domain.Contenido;
 public interface ContenidoMapper {
     ContenidoMapper INSTANCE = Mappers.getMapper(ContenidoMapper.class);
 
-
     ContenidoDTO contenidoToContendidoDTO(Contenido contenido);
+
+    Contenido contenidoDTOToContenido(ContenidoDTO contenidoDTO);
+
+
 }

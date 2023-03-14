@@ -1,22 +1,40 @@
 package ruproject.domain;
 
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
+import org.hibernate.annotations.Cascade;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-@Data
+
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 @Entity
-@Table(name="carreras")
+@Table(name="CARRERAS")
 public class Carrera {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name="name")
+
+
     private String name;
-    @ManyToMany(mappedBy="carreras")
+
+
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    @JoinTable(
+            name = "Carrera_Materia",
+            joinColumns = { @JoinColumn(name = "carrera_id", referencedColumnName = "id") },
+            inverseJoinColumns = { @JoinColumn(name = "materia_id", referencedColumnName = "id") })
     private List<Materia> materias = new ArrayList<>();
 
 }

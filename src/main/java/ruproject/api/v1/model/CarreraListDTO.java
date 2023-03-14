@@ -1,13 +1,21 @@
 package ruproject.api.v1.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import lombok.*;
 
 
 import java.util.List;
 
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
+@NoArgsConstructor
+
 public class CarreraListDTO {
+
     List<CarreraDTO> carreras;
 }
