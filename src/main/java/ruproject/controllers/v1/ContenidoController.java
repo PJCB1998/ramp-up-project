@@ -20,25 +20,25 @@ public class ContenidoController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public ContenidoListDTO getAllContenidos(){
+    public ContenidoListDTO getAllContenidos(@PathVariable String name){
 
-        return new ContenidoListDTO(contenidoService.getAllContenidos());
+        return new ContenidoListDTO(contenidoService.getAllContenidosFromMateria(name));
 
     }
 
     @GetMapping("{id}/")
     @ResponseStatus(HttpStatus.OK)
-    public ContenidoDTO getContenidoById(@PathVariable Long id){
+    public ContenidoDTO getContenidoById(@PathVariable String name, Long id){
 
-        return contenidoService.getContenidoById(id);
+        return contenidoService.getContenidoById(id, name);
 
     }
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public ContenidoDTO createContenido(@RequestBody ContenidoDTO contenido) {
+    public ContenidoDTO createContenido(@PathVariable String name, @RequestBody ContenidoDTO contenido) {
 
-        return contenidoService.saveContenido(contenido);
+        return contenidoService.saveContenido(contenido,name);
 
     }
 

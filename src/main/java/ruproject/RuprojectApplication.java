@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
 @EnableJpaRepositories
-
 public class RuprojectApplication {
 
 	public static void main(String[] args) {

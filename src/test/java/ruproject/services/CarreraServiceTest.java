@@ -88,9 +88,14 @@ class CarreraServiceTest {
         carreraDTO.setName(NAME);
         carreraDTO.setId(ID);
 
+        Carrera savedCarrera = new Carrera();
+        savedCarrera.setName(NAME);
+        savedCarrera.setId(ID);
+
 
         when(carreraRepository.save(any(Carrera.class))).then(returnsFirstArg());
         when(carreraRepository.existsByName(anyString())).thenReturn(true);
+        when(carreraRepository.findByName(anyString())).thenReturn(savedCarrera);
 
 
         CarreraDTO carreraDTO2 = carreraService.updateCarrera(NAME,carreraDTO);

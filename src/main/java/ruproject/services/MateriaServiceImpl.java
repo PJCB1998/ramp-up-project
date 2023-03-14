@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import ruproject.api.v1.mapper.CarreraMapper;
 import ruproject.api.v1.mapper.ContenidoMapper;
+import ruproject.api.v1.mapper.CycleAvoidingMappingContext;
 import ruproject.api.v1.mapper.MateriaMapper;
 import ruproject.api.v1.model.MateriaDTO;
 import ruproject.domain.Carrera;
@@ -41,19 +42,19 @@ public class MateriaServiceImpl implements MateriaService {
         return materiaRepositroy
                 .findAll()
                 .stream()
-                .map(materiaMapper::materiaToMateriaDTO)
+                .map(materia -> materiaMapper.materiaToMateriaDTO(materia, new CycleAvoidingMappingContext()))
                 .collect(Collectors.toList());
     }
 
     @Override
     public MateriaDTO getMateriaByName(String name) {
-        return materiaMapper.materiaToMateriaDTO(materiaRepositroy.findByName(name));
+        return materiaMapper.materiaToMateriaDTO(materiaRepositroy.findByName(name), new CycleAvoidingMappingContext());
     }
 
     @Override
     public MateriaDTO saveMateria(MateriaDTO materiaDTO) {
-        Materia materia = materiaMapper.materiaDTOToMateria(materiaDTO);
-        return materiaMapper.materiaToMateriaDTO(materiaRepositroy.save(materia));
+        Materia materia = materiaMapper.materiaDTOToMateria(materiaDTO, new CycleAvoidingMappingContext());
+        return materiaMapper.materiaToMateriaDTO(materiaRepositroy.save(materia), new CycleAvoidingMappingContext());
 
     }
 
@@ -61,7 +62,7 @@ public class MateriaServiceImpl implements MateriaService {
     public MateriaDTO updateMateria(String name, MateriaDTO materiaDTO) {
         if(existsByName(name)) {
             Materia savedMateria = materiaRepositroy.findByName(materiaDTO.getName());
-            Materia materia = materiaMapper.materiaDTOToMateria(materiaDTO);
+            Materia materia = materiaMapper.materiaDTOToMateria(materiaDTO, new CycleAvoidingMappingContext());
             materia.setName(savedMateria.getName());
             materia.setId(savedMateria.getId());
 
@@ -85,10 +86,14 @@ public class MateriaServiceImpl implements MateriaService {
 
             }
             if(materia.getContenidos() != null){
-                materia.setContenidos(materiaDTO.getContenidos().stream().map(contenidoMapper::contenidoDTOToContenido).collect(Collectors.toList()));
+                materia.setContenidos(materiaDTO
+                        .getContenidos()
+                        .stream()
+                        .map(contenidoDTO -> contenidoMapper.contenidoDTOToContenido(contenidoDTO, new CycleAvoidingMappingContext()))
+                        .collect(Collectors.toList()));
             }
 
-            return materiaMapper.materiaToMateriaDTO(materiaRepositroy.save(materia));
+            return materiaMapper.materiaToMateriaDTO(materiaRepositroy.save(materia),new CycleAvoidingMappingContext());
         }
         throw new IllegalArgumentException("Materia with name: "+ name + " not found");
 

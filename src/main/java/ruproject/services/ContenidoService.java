@@ -4,16 +4,15 @@ import org.springframework.stereotype.Service;
 import ruproject.api.v1.model.ContenidoDTO;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public interface ContenidoService {
 
-    List<ContenidoDTO> getAllContenidos();
+    List<ContenidoDTO> getAllContenidosFromMateria(String name);
 
-    ContenidoDTO getContenidoById(Long id);
+    ContenidoDTO getContenidoById(Long id, String name);
 
-    ContenidoDTO saveContenido(ContenidoDTO contenidoDTO);
+    ContenidoDTO saveContenido(ContenidoDTO contenidoDTO, String name);
 
     ContenidoDTO updateContenido(Long id, ContenidoDTO contenidoDTO);
 

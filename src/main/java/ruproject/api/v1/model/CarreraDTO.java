@@ -1,7 +1,6 @@
 package ruproject.api.v1.model;
 
 import com.fasterxml.jackson.annotation.*;
-import jakarta.persistence.Entity;
 import lombok.*;
 
 import java.util.ArrayList;

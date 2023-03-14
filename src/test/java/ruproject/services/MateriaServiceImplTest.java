@@ -31,6 +31,7 @@ class MateriaServiceImplTest {
 
     @Mock
     MateriaRepositroy materiaRepositroy;
+    @Mock
     CarreraRepository carreraRepository;
 
     @BeforeEach
@@ -90,8 +91,13 @@ class MateriaServiceImplTest {
         materia.setName(NAME);
         materia.setId(ID);
 
+        Materia savedMateria = new Materia();
+        savedMateria.setName(NAME);
+        savedMateria.setId(ID);
+
         when(materiaRepositroy.save(any(Materia.class))).then(returnsFirstArg());
         when(materiaRepositroy.existsByName(anyString())).thenReturn(true);
+        when(materiaRepositroy.findByName(anyString())).thenReturn(savedMateria);
         MateriaDTO materiaDTO = materiaService.updateMateria(NAME,materia);
 
         assertEquals(ID,materiaDTO.getId());

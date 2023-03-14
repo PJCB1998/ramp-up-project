@@ -14,11 +14,11 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name="CARRERAS")
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id")
-@Entity
-@Table(name="CARRERAS")
 public class Carrera {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,8 +28,6 @@ public class Carrera {
     private String name;
 
 
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     @JoinTable(
             name = "Carrera_Materia",

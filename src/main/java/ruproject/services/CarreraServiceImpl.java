@@ -3,6 +3,7 @@ package ruproject.services;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import ruproject.api.v1.mapper.CarreraMapper;
+import ruproject.api.v1.mapper.CycleAvoidingMappingContext;
 import ruproject.api.v1.mapper.MateriaMapper;
 import ruproject.api.v1.model.CarreraDTO;
 import ruproject.domain.Carrera;
@@ -37,26 +38,26 @@ public class CarreraServiceImpl implements CarreraService {
         return carreraRepository
                 .findAll()
                 .stream()
-                .map(carreraMapper::carreraToCarreaDTO)
+                .map(carrera -> carreraMapper.carreraToCarreaDTO(carrera,new CycleAvoidingMappingContext()))
                 .collect(Collectors.toList());
     }
 
     @Override
     public CarreraDTO getCarreraByName(String name) {
-        return carreraMapper.carreraToCarreaDTO(carreraRepository.findByName(name));
+        return carreraMapper.carreraToCarreaDTO(carreraRepository.findByName(name), new CycleAvoidingMappingContext());
     }
 
     @Override
     public CarreraDTO saveCarrera(CarreraDTO carreraDTO) {
-        Carrera carrera = carreraMapper.carreraDTOtoCarrera(carreraDTO);
-        return carreraMapper.carreraToCarreaDTO(carreraRepository.save(carrera));
+        Carrera carrera = carreraMapper.carreraDTOtoCarrera(carreraDTO, new CycleAvoidingMappingContext());
+        return carreraMapper.carreraToCarreaDTO(carreraRepository.save(carrera),new CycleAvoidingMappingContext());
     }
 
     @Override
     public CarreraDTO updateCarrera(String name, CarreraDTO carreraDTO) {
         if ((existsByName(name))) {
             Carrera savedCarrera = carreraRepository.findByName(name);
-            Carrera returnCarrera = carreraMapper.carreraDTOtoCarrera(carreraDTO);
+            Carrera returnCarrera = carreraMapper.carreraDTOtoCarrera(carreraDTO,new CycleAvoidingMappingContext());
             returnCarrera.setName(savedCarrera.getName());
             returnCarrera.setId(savedCarrera.getId());
 
@@ -64,11 +65,11 @@ public class CarreraServiceImpl implements CarreraService {
             List<Materia> savedCarrearMaterias = savedCarrera.getMaterias();
             List<Materia> materias= new ArrayList<>();
 
-            if(savedCarrearMaterias.size()>0){
+            if(!savedCarrearMaterias.isEmpty()){
                 materias.addAll(savedCarrearMaterias);
             }
 
-            if (returnCarrera.getMaterias() != null) {
+            if (!returnCarrera.getMaterias().isEmpty()) {
 
               materias.addAll(returnCarreraMaterias
                         .stream()
@@ -85,7 +86,7 @@ public class CarreraServiceImpl implements CarreraService {
 
 
 
-            return carreraMapper.carreraToCarreaDTO(returnCarrera);
+            return carreraMapper.carreraToCarreaDTO(returnCarrera, new CycleAvoidingMappingContext());
 
         }
 

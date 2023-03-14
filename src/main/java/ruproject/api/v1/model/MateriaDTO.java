@@ -12,17 +12,13 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id")
 public class MateriaDTO {
     private Long id;
     private String name;
-
     private List<ContenidoDTO> contenidos = new ArrayList<>();
-
-
     private List<CarreraDTO> carreras = new ArrayList<>();
 
 }
