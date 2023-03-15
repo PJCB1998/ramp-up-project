@@ -2,14 +2,14 @@ package ruproject.services;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import ruproject.api.v1.mapper.CarreraMapper;
-import ruproject.api.v1.mapper.ContenidoMapper;
 import ruproject.api.v1.mapper.CycleAvoidingMappingContext;
 import ruproject.api.v1.mapper.MateriaMapper;
 import ruproject.api.v1.model.MateriaDTO;
 import ruproject.domain.Carrera;
+import ruproject.domain.Contenido;
 import ruproject.domain.Materia;
 import ruproject.repositories.CarreraRepository;
+import ruproject.repositories.ContenidoRepositroy;
 import ruproject.repositories.MateriaRepositroy;
 
 import java.util.ArrayList;
@@ -21,20 +21,17 @@ public class MateriaServiceImpl implements MateriaService {
 
     private final MateriaMapper materiaMapper;
     private final MateriaRepositroy materiaRepositroy;
-    private final CarreraMapper carreraMapper;
 
     private final CarreraRepository carreraRepository;
 
-    private final ContenidoMapper contenidoMapper;
+    private final ContenidoRepositroy contenidoRepositroy;
 
 
-    public MateriaServiceImpl(MateriaMapper materiaMapper, MateriaRepositroy materiaRepositroy, CarreraMapper carreraMapper, CarreraRepository carreraRepository, ContenidoMapper contenidoMapper) {
+    public MateriaServiceImpl(MateriaMapper materiaMapper, MateriaRepositroy materiaRepositroy, CarreraRepository carreraRepository, ContenidoRepositroy contenidoRepositroy) {
         this.materiaMapper = materiaMapper;
         this.materiaRepositroy = materiaRepositroy;
-
-        this.carreraMapper = carreraMapper;
         this.carreraRepository = carreraRepository;
-        this.contenidoMapper = contenidoMapper;
+        this.contenidoRepositroy = contenidoRepositroy;
     }
 
     @Override
@@ -70,11 +67,11 @@ public class MateriaServiceImpl implements MateriaService {
             List<Carrera> returnCarreras = materia.getCarreras();
             List<Carrera> carreraList = new ArrayList<>();
 
-            if(savedCarreraList.size()>0){
+            if(!savedCarreraList.isEmpty()){
                 carreraList.addAll(savedCarreraList);
             }
 
-            if(materia.getCarreras()!=null){
+            if(!returnCarreras.isEmpty()){
 
                 carreraList.addAll(returnCarreras
                         .stream()
@@ -85,13 +82,29 @@ public class MateriaServiceImpl implements MateriaService {
                 materia.setCarreras(carreraList);
 
             }
-            if(materia.getContenidos() != null){
-                materia.setContenidos(materiaDTO
-                        .getContenidos()
-                        .stream()
-                        .map(contenidoDTO -> contenidoMapper.contenidoDTOToContenido(contenidoDTO, new CycleAvoidingMappingContext()))
-                        .collect(Collectors.toList()));
+
+            List<Contenido> savedContenidos= savedMateria.getContenidos();
+            List<Contenido> returnContenidos = materia.getContenidos();
+            List<Contenido> contenidoList = new ArrayList<>();
+
+            if(!savedContenidos.isEmpty()){
+                contenidoList.addAll(savedContenidos);
             }
+
+
+            if(!returnContenidos.isEmpty()){
+
+                contenidoList.addAll(returnContenidos
+                        .stream()
+                        .filter(contenido -> contenidoRepositroy.existsById(contenido.getId()))
+                        .map(contenido -> contenidoRepositroy
+                                .findById(contenido.getId())
+                                .orElseThrow(()-> new RuntimeException("Contenido not found") ))
+                        .collect(Collectors.toList()));
+
+                materia.setContenidos(contenidoList);
+            }
+
 
             return materiaMapper.materiaToMateriaDTO(materiaRepositroy.save(materia),new CycleAvoidingMappingContext());
         }

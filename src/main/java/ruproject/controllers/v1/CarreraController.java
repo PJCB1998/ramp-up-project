@@ -34,7 +34,7 @@ public class CarreraController {
         return carreraService.saveCarrera(carrera);
     }
 
-    @PutMapping(path = "{name}/", produces = "application/json" )
+    @PutMapping(path = "{name}/")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public CarreraDTO updateCarrera(@PathVariable String name, @RequestBody CarreraDTO carreraDTO) {
         return carreraService.updateCarrera(name,carreraDTO);

@@ -28,7 +28,7 @@ public class ContenidoController {
 
     @GetMapping("{id}/")
     @ResponseStatus(HttpStatus.OK)
-    public ContenidoDTO getContenidoById(@PathVariable String name, Long id){
+    public ContenidoDTO getContenidoById(@PathVariable String name, @PathVariable Long id){
 
         return contenidoService.getContenidoById(id, name);
 
@@ -44,9 +44,9 @@ public class ContenidoController {
 
     @PutMapping("{id}/")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ContenidoDTO updateContenido(@PathVariable Long id, @RequestBody ContenidoDTO contenido) {
+    public ContenidoDTO updateContenido(@PathVariable Long id, @PathVariable String name, @RequestBody ContenidoDTO contenido) {
 
-        return contenidoService.updateContenido(id,contenido);
+        return contenidoService.updateContenido(id,name , contenido);
 
     }
 

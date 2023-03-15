@@ -3,14 +3,16 @@ package ruproject.services;
 import org.springframework.stereotype.Service;
 import ruproject.api.v1.mapper.ContenidoMapper;
 import ruproject.api.v1.mapper.CycleAvoidingMappingContext;
-import ruproject.api.v1.mapper.LibroMapper;
 import ruproject.api.v1.mapper.MateriaMapper;
 import ruproject.api.v1.model.ContenidoDTO;
 import ruproject.domain.Contenido;
+import ruproject.domain.Libro;
 import ruproject.domain.Materia;
 import ruproject.repositories.ContenidoRepositroy;
+import ruproject.repositories.LibroRepository;
 import ruproject.repositories.MateriaRepositroy;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,19 +23,19 @@ public class ContenidoServiceImpl implements ContenidoService {
 
     private final MateriaMapper materiaMapper;
 
-    private final LibroMapper libroMapper;
 
     private final ContenidoRepositroy contenidoRepositroy;
 
     private final MateriaRepositroy materiaRepositroy;
 
+    private final LibroRepository libroRepository;
 
-    public ContenidoServiceImpl(ContenidoMapper contenidoMapper, MateriaMapper materiaMapper, LibroMapper libroMapper, ContenidoRepositroy contenidoRepositroy, MateriaRepositroy materiaRepositroy) {
+    public ContenidoServiceImpl(ContenidoMapper contenidoMapper, MateriaMapper materiaMapper, ContenidoRepositroy contenidoRepositroy, MateriaRepositroy materiaRepositroy, LibroRepository libroRepository) {
         this.contenidoMapper = contenidoMapper;
         this.materiaMapper = materiaMapper;
-        this.libroMapper = libroMapper;
         this.contenidoRepositroy = contenidoRepositroy;
         this.materiaRepositroy = materiaRepositroy;
+        this.libroRepository = libroRepository;
     }
 
     @Override
@@ -97,28 +99,59 @@ public class ContenidoServiceImpl implements ContenidoService {
     }
 
     @Override
-    public ContenidoDTO updateContenido(Long id, ContenidoDTO contenidoDTO) {
+    public ContenidoDTO updateContenido(Long id, String name, ContenidoDTO contenidoDTO) {
 
-        if(existsById(id)){
+
+        if(existsById(id) && materiaRepositroy
+                .findByName(name)
+                .getContenidos()
+                .stream()
+                .map(Contenido::getId).collect(Collectors.toList()).contains(id)){
 
             Contenido contenido = contenidoMapper.contenidoDTOToContenido(contenidoDTO, new CycleAvoidingMappingContext());
-            contenido.setId(contenidoDTO.getId());
 
-            if(contenidoDTO.getCursos() != null) {
-                contenido.setCursos(contenidoDTO.getCursos());
+            Contenido savedContenido = contenidoRepositroy.findContenidoByIdAndMateriaId(id, materiaRepositroy.findByName(name).getId());
+
+            contenido.setId(savedContenido.getId());
+
+            List<String> savedCursos = savedContenido.getCursos();
+            List<String> retrunCursos = contenido.getCursos();
+            List<String> cursos = new ArrayList<>();
+
+            if(!savedCursos.isEmpty()){
+                cursos.addAll(savedCursos);
             }
-            if(contenidoDTO.getLibros() !=null) {
 
-                contenido.setLibros(contenidoDTO
-                        .getLibros()
+            if(!retrunCursos.isEmpty()) {
+
+                cursos.addAll(retrunCursos);
+                contenido.setCursos(cursos);
+
+            }
+
+            List<Libro> savedLibros = savedContenido.getLibros();
+            List<Libro> returnLibros = contenido.getLibros();
+            List<Libro> libros = new ArrayList<>();
+
+            if(!savedLibros.isEmpty()){
+                libros.addAll(savedLibros);
+            }
+
+            if(!returnLibros.isEmpty()) {
+                libros.addAll(returnLibros
                         .stream()
-                        .map(libroDTO -> libroMapper.libroDTOTOLibro(libroDTO,new CycleAvoidingMappingContext()))
+                        .filter(libro -> libroRepository.existsById(libro.getId()))
+                        .map(libro -> libroRepository
+                                .findById(libro.getId()).orElseThrow(()->new RuntimeException("Libro Not Found")))
                         .collect(Collectors.toList()));
+
+                contenido.setLibros(libros);
             }
 
             if( contenidoDTO.getMateria() != null) {
                 contenido.setMateria(materiaMapper.materiaDTOToMateria(contenidoDTO.getMateria(), new CycleAvoidingMappingContext()));
             }
+
             return contenidoMapper.contenidoToContendidoDTO(contenidoRepositroy.save(contenido), new CycleAvoidingMappingContext());
 
         }

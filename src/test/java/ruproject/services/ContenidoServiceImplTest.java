@@ -5,12 +5,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import ruproject.api.v1.mapper.ContenidoMapper;
-import ruproject.api.v1.mapper.LibroMapper;
 import ruproject.api.v1.mapper.MateriaMapper;
 import ruproject.api.v1.model.ContenidoDTO;
 import ruproject.domain.Contenido;
 import ruproject.domain.Materia;
 import ruproject.repositories.ContenidoRepositroy;
+import ruproject.repositories.LibroRepository;
 import ruproject.repositories.MateriaRepositroy;
 
 import java.util.ArrayList;
@@ -33,11 +33,14 @@ class ContenidoServiceImplTest {
     @Mock
     MateriaRepositroy materiaRepositroy;
 
+    @Mock
+    LibroRepository libroRepository;
+
 
     @BeforeEach
     void setup(){
         MockitoAnnotations.openMocks(this);
-        contenidoService = new ContenidoServiceImpl(ContenidoMapper.INSTANCE, MateriaMapper.INSTANCE, LibroMapper.INSTANCE, contenidoRepositroy, materiaRepositroy);
+        contenidoService = new ContenidoServiceImpl(ContenidoMapper.INSTANCE, MateriaMapper.INSTANCE, contenidoRepositroy, materiaRepositroy, libroRepository);
     }
     @Test
     void Add_5_Contenidos_Returns_Number_Of_Contenidos() {
@@ -95,7 +98,7 @@ class ContenidoServiceImplTest {
     }
 
     @Test
-    void deleteContenido() {
+    void Delete_Contenido() {
 
         Contenido contenido = new Contenido();
         contenido.setId(ID);

@@ -103,7 +103,7 @@ class CarreraControllerTest {
         returnDTO.setName(carreraDTO.getName());
         returnDTO.setId((carreraDTO.getId()));
 
-        when(carreraService.saveCarrera(carreraDTO)).thenReturn(returnDTO);
+        when(carreraService.saveCarrera(any(CarreraDTO.class))).thenReturn(returnDTO);
 
         mvc.perform(MockMvcRequestBuilders
                 .post("/api/v1/carreras/")
@@ -111,8 +111,8 @@ class CarreraControllerTest {
                         .content(asJsonString(carreraDTO)))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name",equalTo(NAME)))
-                .andExpect(jsonPath("$.id",equalTo(1)));
+                .andExpect(jsonPath("$.id",equalTo(1)))
+                .andExpect(jsonPath("$.name",equalTo(NAME)));
 
 
     }

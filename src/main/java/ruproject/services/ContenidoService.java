@@ -14,7 +14,7 @@ public interface ContenidoService {
 
     ContenidoDTO saveContenido(ContenidoDTO contenidoDTO, String name);
 
-    ContenidoDTO updateContenido(Long id, ContenidoDTO contenidoDTO);
+    ContenidoDTO updateContenido(Long id,String name, ContenidoDTO contenidoDTO);
 
     boolean existsById(Long id);
 

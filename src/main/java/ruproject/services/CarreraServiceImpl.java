@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import ruproject.api.v1.mapper.CarreraMapper;
 import ruproject.api.v1.mapper.CycleAvoidingMappingContext;
-import ruproject.api.v1.mapper.MateriaMapper;
 import ruproject.api.v1.model.CarreraDTO;
 import ruproject.domain.Carrera;
 import ruproject.domain.Materia;
@@ -22,14 +21,12 @@ public class CarreraServiceImpl implements CarreraService {
     private final CarreraMapper carreraMapper;
     private final CarreraRepository carreraRepository;
 
-    private final MateriaMapper materiaMapper;
 
     private final MateriaRepositroy materiaRepositroy;
 
-    public CarreraServiceImpl(CarreraMapper carreraMapper, CarreraRepository carreraRepository, MateriaMapper materiaMapper, MateriaRepositroy materiaRepositroy) {
+    public CarreraServiceImpl(CarreraMapper carreraMapper, CarreraRepository carreraRepository,  MateriaRepositroy materiaRepositroy) {
         this.carreraMapper = carreraMapper;
         this.carreraRepository = carreraRepository;
-        this.materiaMapper = materiaMapper;
         this.materiaRepositroy = materiaRepositroy;
     }
 
@@ -55,7 +52,7 @@ public class CarreraServiceImpl implements CarreraService {
 
     @Override
     public CarreraDTO updateCarrera(String name, CarreraDTO carreraDTO) {
-        if ((existsByName(name))) {
+        if (existsByName(name)) {
             Carrera savedCarrera = carreraRepository.findByName(name);
             Carrera returnCarrera = carreraMapper.carreraDTOtoCarrera(carreraDTO,new CycleAvoidingMappingContext());
             returnCarrera.setName(savedCarrera.getName());

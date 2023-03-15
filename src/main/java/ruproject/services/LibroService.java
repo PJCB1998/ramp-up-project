@@ -7,9 +7,13 @@ import java.util.List;
 
 public interface LibroService {
 
+    List<LibroDTO> getAllLibrosFromContenido(Long contenido_id, String name);
+
+    LibroDTO getLibroByIdFromContenido(Long id, Long contenido_id, String name);
+
     List<LibroDTO> getAllLibros();
 
-    LibroDTO getLibroById(Long Id);
+    LibroDTO getLibroById(Long id);
 
     LibroDTO saveLibro(LibroDTO libroDTO);
 

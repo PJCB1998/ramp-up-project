@@ -1,39 +1,149 @@
 package ruproject.services;
 
 import org.springframework.stereotype.Service;
+import ruproject.api.v1.mapper.CycleAvoidingMappingContext;
+import ruproject.api.v1.mapper.LibroMapper;
 import ruproject.api.v1.model.LibroDTO;
+import ruproject.domain.Contenido;
+import ruproject.domain.Libro;
+import ruproject.repositories.ContenidoRepositroy;
+import ruproject.repositories.LibroRepository;
+import ruproject.repositories.MateriaRepositroy;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class LibroServiceImpl implements LibroService {
-    @Override
-    public List<LibroDTO> getAllLibros() {
-        return null;
+
+    private final ContenidoRepositroy contenidoRepositroy;
+
+    private final LibroRepository libroRepository;
+
+
+    private final LibroMapper libroMapper;
+
+    private final MateriaRepositroy materiaRepositroy;
+
+    public LibroServiceImpl(ContenidoRepositroy contenidoRepositroy, LibroRepository libroRepository ,MateriaRepositroy materiaRepositroy, LibroMapper libroMapper) {
+        this.contenidoRepositroy = contenidoRepositroy;
+        this.libroRepository = libroRepository;
+        this.libroMapper = libroMapper;
+        this.materiaRepositroy = materiaRepositroy;
+
     }
 
     @Override
-    public LibroDTO getLibroById(Long Id) {
-        return null;
+    public List<LibroDTO> getAllLibrosFromContenido(Long contenido_id, String name) {
+
+        if(contenidoRepositroy.existsById(contenido_id)){
+            return contenidoRepositroy
+                    .findContenidoByIdAndMateriaId(contenido_id, materiaRepositroy.findByName(name).getId())
+                    .getLibros()
+                    .stream()
+                    .map(libro -> libroMapper.libroToLibroDTO(libro,new CycleAvoidingMappingContext()))
+                    .collect(Collectors.toList());
+        }
+
+        throw new RuntimeException("Materia Not Found");
+
+    }
+
+    @Override
+    public LibroDTO getLibroByIdFromContenido(Long id,Long contenido_id,String name) {
+        if(materiaRepositroy.existsByName(name)){
+
+            return libroMapper.libroToLibroDTO(
+                            libroRepository.findLibroByIdAndContenidoIdAndMateriaId(id,contenido_id,materiaRepositroy.findByName(name).getId())
+                            , new CycleAvoidingMappingContext());
+
+        }
+
+        throw (new RuntimeException("Materia Not Found"));
+    }
+
+    @Override
+    public List<LibroDTO> getAllLibros(){
+
+        return libroRepository
+                .findAll()
+                .stream()
+                .map(libro -> libroMapper.libroToLibroDTO(libro,new CycleAvoidingMappingContext()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public LibroDTO getLibroById(Long id){
+
+        return libroMapper.libroToLibroDTO(libroRepository.findById(id).orElseThrow(()-> new RuntimeException("Libro Not Found")), new CycleAvoidingMappingContext());
+
     }
 
     @Override
     public LibroDTO saveLibro(LibroDTO libroDTO) {
-        return null;
+        Libro libro = libroMapper.libroDTOTOLibro(libroDTO, new CycleAvoidingMappingContext());
+        return libroMapper.libroToLibroDTO(libroRepository.save(libro),new CycleAvoidingMappingContext());
+
     }
 
     @Override
     public LibroDTO updateLibro(Long id, LibroDTO libroDTO) {
-        return null;
+
+        if(exsitsById(id)){
+
+            Libro savedLibro = libroRepository.findById(id).orElseThrow(()-> new RuntimeException("Libro not found"));
+            Libro retrunLibro = libroMapper.libroDTOTOLibro(libroDTO,new CycleAvoidingMappingContext());
+
+            retrunLibro.setId(savedLibro.getId());
+            retrunLibro.setAutor(savedLibro.getAutor());
+            retrunLibro.setTitulo(savedLibro.getTitulo());
+
+            List<Contenido> retrunContenidos = retrunLibro.getContenidos();
+            List<Contenido> savedContenidos = savedLibro.getContenidos();
+            List<Contenido> contenidos = new ArrayList<>();
+
+            if(!savedContenidos.isEmpty()){
+
+                contenidos.addAll(savedContenidos);
+
+            }
+
+            if(!retrunContenidos.isEmpty()){
+
+                contenidos.addAll(retrunContenidos
+                        .stream()
+                        .filter(contenido -> contenidoRepositroy.existsById(contenido.getId()))
+                        .map(contenido -> contenidoRepositroy.findById(contenido.getId()).orElseThrow(()-> new RuntimeException("Contenido not found")))
+                        .collect(Collectors.toList()));
+
+
+               retrunLibro.setContenidos(contenidos);
+
+            }
+
+            retrunLibro= libroRepository.save(retrunLibro);
+
+            return libroMapper.libroToLibroDTO(retrunLibro, new CycleAvoidingMappingContext());
+
+
+
+        }
+
+        throw new IllegalArgumentException("Libro with id: " + id + " not found" );
+
+
     }
 
     @Override
     public boolean exsitsById(Long id) {
-        return false;
+        return libroRepository.existsById(id);
     }
 
     @Override
     public void deleteLibro(Long id) {
+
+        libroRepository.deleteById(id);
 
     }
 }
