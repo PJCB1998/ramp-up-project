@@ -5,12 +5,20 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import ruproject.api.v1.mapper.MateriaMapper;
+import ruproject.api.v1.model.CarreraDTO;
+import ruproject.api.v1.model.ContenidoDTO;
 import ruproject.api.v1.model.MateriaDTO;
+import ruproject.domain.Carrera;
+import ruproject.domain.Contenido;
 import ruproject.domain.Materia;
+import ruproject.repositories.CarreraRepository;
+import ruproject.repositories.ContenidoRepositroy;
 import ruproject.repositories.MateriaRepositroy;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -28,11 +36,15 @@ class MateriaServiceImplTest {
 
     @Mock
     MateriaRepositroy materiaRepositroy;
+    @Mock
+    CarreraRepository carreraRepository;
+    @Mock
+    ContenidoRepositroy contenidoRepositroy;
 
     @BeforeEach
     void setUp(){
         MockitoAnnotations.openMocks(this);
-        materiaService = new MateriaServiceImpl(MateriaMapper.INSTANCE,materiaRepositroy);
+        materiaService = new MateriaServiceImpl(MateriaMapper.INSTANCE,materiaRepositroy, carreraRepository, contenidoRepositroy);
     }
 
     @Test
@@ -82,16 +94,53 @@ class MateriaServiceImplTest {
     @Test
     void Add_Update_Materia_Return_Updated_Materia() {
 
-        MateriaDTO materia = new MateriaDTO();
-        materia.setName(NAME);
-        materia.setId(ID);
+        MateriaDTO materiaDTO = new MateriaDTO();
+        materiaDTO.setName(NAME);
+        materiaDTO.setId(ID);
+
+        CarreraDTO carreraDTO = new CarreraDTO();
+        carreraDTO.setId(1L);
+        carreraDTO.setName("Ingenieria");
+
+        List<CarreraDTO> carreraDTOS = new ArrayList<>();
+        carreraDTOS.add(carreraDTO);
+        materiaDTO.setCarreras(carreraDTOS);
+
+        ContenidoDTO contenidoDTO = new ContenidoDTO();
+        contenidoDTO.setId(1L);
+
+        List<ContenidoDTO> contenidoDTOS = new ArrayList<>();
+        contenidoDTOS.add(contenidoDTO);
+        materiaDTO.setContenidos(contenidoDTOS);
+
+
+        Materia savedMateria = new Materia();
+        savedMateria.setName(NAME);
+        savedMateria.setId(ID);
+
+        Carrera savedCarrera = new Carrera();
+        savedCarrera.setId(1L);
+        savedCarrera.setName("Ingenieria");
+
+        Contenido savedContenido = new Contenido();
+        savedContenido.setId(1L);
+
 
         when(materiaRepositroy.save(any(Materia.class))).then(returnsFirstArg());
         when(materiaRepositroy.existsByName(anyString())).thenReturn(true);
-        MateriaDTO materiaDTO = materiaService.updateMateria(NAME,materia);
+        when(materiaRepositroy.findByName(anyString())).thenReturn(savedMateria);
+        when(carreraRepository.existsByName(anyString())).thenReturn(true);
+        when(carreraRepository.findByName(anyString())).thenReturn(savedCarrera);
+        when(contenidoRepositroy.existsById(anyLong())).thenReturn(true);
+        when(contenidoRepositroy.findById(anyLong())).thenReturn(Optional.of(savedContenido));
 
-        assertEquals(ID,materiaDTO.getId());
-        assertEquals(NAME,materiaDTO.getName());
+
+        MateriaDTO materiaDTO1 = materiaService.updateMateria(NAME, materiaDTO);
+
+        assertEquals(ID,materiaDTO1.getId());
+        assertEquals(NAME,materiaDTO1.getName());
+        assertNotNull(materiaDTO1.getCarreras());
+        assertNotNull(materiaDTO1.getContenidos());
     }
 
     @Test

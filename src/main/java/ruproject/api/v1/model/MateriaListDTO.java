@@ -1,12 +1,14 @@
 package ruproject.api.v1.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+
+import lombok.*;
 
 import java.util.List;
 
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class MateriaListDTO {
     List<MateriaDTO> materias;
 }

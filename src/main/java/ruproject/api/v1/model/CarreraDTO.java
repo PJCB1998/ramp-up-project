@@ -1,14 +1,19 @@
 package ruproject.api.v1.model;
 
-import lombok.Data;
-import ruproject.domain.Materia;
+import com.fasterxml.jackson.annotation.*;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
-@Data
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class CarreraDTO {
     private Long id;
     private String name;
     private List<MateriaDTO> materias = new ArrayList<>();
-
 }

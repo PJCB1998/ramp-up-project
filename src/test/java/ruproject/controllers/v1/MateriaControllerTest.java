@@ -93,16 +93,16 @@ class MateriaControllerTest {
         returnDTO.setName(materiaDTO.getName());
         returnDTO.setId(materiaDTO.getId());
 
-        when(materiaService.saveMateria(materiaDTO)).thenReturn(returnDTO);
+        when(materiaService.saveMateria(any(MateriaDTO.class))).thenReturn(returnDTO);
 
         mvc.perform(MockMvcRequestBuilders
-                .post("/api/v1/materias/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(materiaDTO)))
+                        .post("/api/v1/materias/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(materiaDTO)))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name",equalTo(NAME)))
-                .andExpect(jsonPath("$.id",equalTo(1)));
+                .andExpect(jsonPath("$.id",equalTo(1)))
+                .andExpect(jsonPath("$.name",equalTo(NAME)));
 
     }
 

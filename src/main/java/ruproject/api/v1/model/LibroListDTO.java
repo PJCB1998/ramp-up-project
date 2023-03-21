@@ -1,10 +1,7 @@
 package ruproject.api.v1.model;
 
 
-
-
 import lombok.*;
-
 
 import java.util.List;
 
@@ -12,7 +9,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CarreraListDTO {
+public class LibroListDTO {
 
-    List<CarreraDTO> carreras;
+    List<LibroDTO> libros;
 }

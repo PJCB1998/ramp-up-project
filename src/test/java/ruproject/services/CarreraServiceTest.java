@@ -7,9 +7,13 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import ruproject.api.v1.mapper.CarreraMapper;
 import ruproject.api.v1.model.CarreraDTO;
+import ruproject.api.v1.model.MateriaDTO;
 import ruproject.domain.Carrera;
+import ruproject.domain.Materia;
 import ruproject.repositories.CarreraRepository;
+import ruproject.repositories.MateriaRepositroy;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,12 +32,13 @@ class CarreraServiceTest {
 
     @Mock
     CarreraRepository carreraRepository;
-    CarreraMapper carreraMapper;
+    @Mock
+    MateriaRepositroy materiaRepositroy;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        carreraService = new CarreraServiceImpl(CarreraMapper.INSTANCE,carreraRepository);
+        carreraService = new CarreraServiceImpl(CarreraMapper.INSTANCE,carreraRepository, materiaRepositroy);
     }
 
     @Test //Used to test getAllCarreras() Mehtod
@@ -86,15 +91,39 @@ class CarreraServiceTest {
         carreraDTO.setName(NAME);
         carreraDTO.setId(ID);
 
+        MateriaDTO materiaDTO = new MateriaDTO();
+        materiaDTO.setId(1L);
+        materiaDTO.setName("Fisica");
+
+        List<MateriaDTO> materiaDTOS = new ArrayList<>();
+
+        materiaDTOS.add(materiaDTO);
+
+        carreraDTO.setMaterias(materiaDTOS);
+
+
+        Carrera savedCarrera = new Carrera();
+        savedCarrera.setName(NAME);
+        savedCarrera.setId(ID);
+
+        Materia materia = new Materia();
+        materia.setId(1L);
+        materia.setName("Fisica");
+
+
 
         when(carreraRepository.save(any(Carrera.class))).then(returnsFirstArg());
         when(carreraRepository.existsByName(anyString())).thenReturn(true);
+        when(carreraRepository.findByName(anyString())).thenReturn(savedCarrera);
+        when(materiaRepositroy.findByName(anyString())).thenReturn(materia);
+        when(materiaRepositroy.existsByName(anyString())).thenReturn(true);
 
 
         CarreraDTO carreraDTO2 = carreraService.updateCarrera(NAME,carreraDTO);
 
-        assertNotNull(carreraDTO2.getId());
+        assertNotNull(carreraDTO2.getMaterias());
         assertEquals(NAME,carreraDTO2.getName());
+        assertEquals(ID,carreraDTO.getId());
     }
 
     @Test //Used to test existsByName()

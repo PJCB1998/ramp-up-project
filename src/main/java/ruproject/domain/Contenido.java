@@ -1,27 +1,35 @@
 package ruproject.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
-import java.rmi.MarshalException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name="contenidos")
+@Table(name="CONTENIDOS")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Contenido {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column
-    private List<String> libros = new ArrayList<>();
-    @Column
+
+    @ManyToMany(fetch = FetchType.EAGER,mappedBy = "contenidos")
+    private List<Libro> libros = new ArrayList<>();
+
     private List<String> examenes = new ArrayList<>();
-    @Column
+
     private List<String> cursos = new ArrayList<>();
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="materia_id")
     private Materia materia;
 }
