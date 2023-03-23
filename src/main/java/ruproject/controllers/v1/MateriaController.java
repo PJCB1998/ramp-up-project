@@ -1,5 +1,6 @@
 package ruproject.controllers.v1;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ruproject.api.v1.model.MateriaDTO;
@@ -30,13 +31,13 @@ public class MateriaController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public MateriaDTO createMateria(@RequestBody MateriaDTO materia) {
+    public MateriaDTO createMateria(@Valid @RequestBody MateriaDTO materia) {
         return materiaService.saveMateria(materia);
     }
 
     @PutMapping("{name}/")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public MateriaDTO updateMateria(@PathVariable String name, @RequestBody MateriaDTO materia) {
+    public MateriaDTO updateMateria(@PathVariable String name,@Valid @RequestBody MateriaDTO materia) {
 
         return materiaService.updateMateria(name,materia);
 

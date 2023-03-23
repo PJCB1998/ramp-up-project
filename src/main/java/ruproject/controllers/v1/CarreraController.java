@@ -1,5 +1,6 @@
 package ruproject.controllers.v1;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ruproject.api.v1.model.CarreraDTO;
@@ -30,13 +31,13 @@ public class CarreraController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public CarreraDTO createCarrera(@RequestBody CarreraDTO carrera) {
+    public CarreraDTO createCarrera(@Valid @RequestBody CarreraDTO carrera) {
         return carreraService.saveCarrera(carrera);
     }
 
     @PutMapping(path = "{name}/")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public CarreraDTO updateCarrera(@PathVariable String name, @RequestBody CarreraDTO carreraDTO) {
+    public CarreraDTO updateCarrera(@PathVariable String name, @Valid @RequestBody CarreraDTO carreraDTO) {
         return carreraService.updateCarrera(name,carreraDTO);
     }
 

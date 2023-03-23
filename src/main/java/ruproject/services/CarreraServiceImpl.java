@@ -7,6 +7,7 @@ import ruproject.api.v1.mapper.CycleAvoidingMappingContext;
 import ruproject.api.v1.model.CarreraDTO;
 import ruproject.domain.Carrera;
 import ruproject.domain.Materia;
+import ruproject.exception.CarreraNotFoundException;
 import ruproject.repositories.CarreraRepository;
 import ruproject.repositories.MateriaRepositroy;
 
@@ -89,7 +90,7 @@ public class CarreraServiceImpl implements CarreraService {
 
 
 
-        throw new IllegalArgumentException("Carrera with name:" + name + " not found");
+        throw new CarreraNotFoundException(name);
 
     }
 

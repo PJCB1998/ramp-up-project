@@ -1,5 +1,6 @@
 package ruproject.controllers.v1;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ruproject.api.v1.model.ContenidoDTO;
@@ -36,7 +37,7 @@ public class ContenidoController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public ContenidoDTO createContenido(@PathVariable String name, @RequestBody ContenidoDTO contenido) {
+    public ContenidoDTO createContenido(@PathVariable String name, @Valid @RequestBody ContenidoDTO contenido) {
 
         return contenidoService.saveContenido(contenido,name);
 
@@ -44,7 +45,7 @@ public class ContenidoController {
 
     @PutMapping("{id}/")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ContenidoDTO updateContenido(@PathVariable Long id, @PathVariable String name, @RequestBody ContenidoDTO contenido) {
+    public ContenidoDTO updateContenido(@PathVariable Long id, @PathVariable String name, @Valid @RequestBody ContenidoDTO contenido) {
 
         return contenidoService.updateContenido(id,name , contenido);
 
