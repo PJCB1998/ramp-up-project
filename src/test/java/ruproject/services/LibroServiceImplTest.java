@@ -71,7 +71,7 @@ class LibroServiceImplTest {
 
         when(contenidoRepositroy.existsById(anyLong())).thenReturn(true);
         when(contenidoRepositroy.findContenidoByIdAndMateriaId(anyLong(),anyLong())).thenReturn(contenido);
-        when(materiaRepositroy.findByName(anyString())).thenReturn(materia);
+        when(materiaRepositroy.findByName(anyString())).thenReturn(Optional.of(materia));
 
         List<LibroDTO> libroDTOS = libroService.getAllLibrosFromContenido(contenido.getId(),materia.getName());
 
@@ -103,7 +103,7 @@ class LibroServiceImplTest {
         materia.setId(1L);
 
         when(materiaRepositroy.existsByName(anyString())).thenReturn(true);
-        when(materiaRepositroy.findByName(anyString())).thenReturn(materia);
+        when(materiaRepositroy.findByName(anyString())).thenReturn(Optional.of(materia));
         when(libroRepository.findLibroByIdAndContenidoIdAndMateriaId(anyLong(),anyLong(),anyLong())).thenReturn(libro);
 
         LibroDTO libroDTO = libroService.getLibroByIdFromContenido(libro.getId(), contenido.getId(),materia.getName());

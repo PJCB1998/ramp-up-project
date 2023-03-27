@@ -45,7 +45,7 @@ public class ContenidoServiceImpl implements ContenidoService {
     public List<ContenidoDTO> getAllContenidosFromMateria(String name) {
         if(materiaRepositroy.existsByName(name)){
             return materiaRepositroy
-                .findByName(name)
+                .findByName(name).orElseThrow(()-> new MateriaNotFoundException(name))
                 .getContenidos()
                 .stream()
                 .map(contenido -> contenidoMapper.contenidoToContendidoDTO(contenido, new CycleAvoidingMappingContext()))
@@ -83,7 +83,7 @@ public class ContenidoServiceImpl implements ContenidoService {
         Long materia_id;
 
         if(materiaRepositroy.existsByName(name)){
-            materia_id = materiaRepositroy.findByName(name).getId();
+            materia_id = materiaRepositroy.findByName(name).orElseThrow(()-> new MateriaNotFoundException(name)).getId();
             return contenidoMapper.contenidoToContendidoDTO(contenidoRepositroy.findContenidoByIdAndMateriaId(id,materia_id), new CycleAvoidingMappingContext());
 
         }
@@ -96,7 +96,7 @@ public class ContenidoServiceImpl implements ContenidoService {
     @Override
     public ContenidoDTO saveContenido(ContenidoDTO contenidoDTO, String name) {
         Contenido contenido = contenidoMapper.contenidoDTOToContenido(contenidoDTO, new CycleAvoidingMappingContext());
-        Materia materia = materiaRepositroy.findByName(name);
+        Materia materia = materiaRepositroy.findByName(name).orElseThrow(()-> new MateriaNotFoundException(name));
         contenido.setMateria(materia);
         return contenidoMapper.contenidoToContendidoDTO(contenidoRepositroy.save(contenido), new CycleAvoidingMappingContext());
     }
@@ -107,13 +107,15 @@ public class ContenidoServiceImpl implements ContenidoService {
 
         if(existsById(id) && materiaRepositroy
                 .findByName(name)
+                .orElseThrow(()-> new MateriaNotFoundException(name))
                 .getContenidos()
                 .stream()
                 .map(Contenido::getId).collect(Collectors.toList()).contains(id)){
 
             Contenido contenido = contenidoMapper.contenidoDTOToContenido(contenidoDTO, new CycleAvoidingMappingContext());
 
-            Contenido savedContenido = contenidoRepositroy.findContenidoByIdAndMateriaId(id, materiaRepositroy.findByName(name).getId());
+            Contenido savedContenido = contenidoRepositroy.findContenidoByIdAndMateriaId(id, materiaRepositroy.findByName(name)
+                    .orElseThrow(()-> new MateriaNotFoundException((name))).getId());
 
             contenido.setId(savedContenido.getId());
 

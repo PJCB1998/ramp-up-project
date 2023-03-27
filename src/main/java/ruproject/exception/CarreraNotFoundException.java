@@ -4,7 +4,7 @@ public class CarreraNotFoundException extends RuntimeException {
 
     public CarreraNotFoundException(String name){
 
-        super(String.format("Carrera with Name: %d not found",name));
+        super("Carrera with Name: " + name +" not found");
 
     }
 

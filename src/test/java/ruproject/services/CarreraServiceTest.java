@@ -16,6 +16,7 @@ import ruproject.repositories.MateriaRepositroy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -59,7 +60,7 @@ class CarreraServiceTest {
         carrera.setName(NAME);
         carrera.setId(ID);
 
-        when(carreraRepository.findByName(anyString())).thenReturn(carrera);
+        when(carreraRepository.findByName(anyString())).thenReturn(Optional.of(carrera));
 
         CarreraDTO carreraDTO = carreraService.getCarreraByName(NAME);
 
@@ -114,8 +115,8 @@ class CarreraServiceTest {
 
         when(carreraRepository.save(any(Carrera.class))).then(returnsFirstArg());
         when(carreraRepository.existsByName(anyString())).thenReturn(true);
-        when(carreraRepository.findByName(anyString())).thenReturn(savedCarrera);
-        when(materiaRepositroy.findByName(anyString())).thenReturn(materia);
+        when(carreraRepository.findByName(anyString())).thenReturn(Optional.of(savedCarrera));
+        when(materiaRepositroy.findByName(anyString())).thenReturn(Optional.of(materia));
         when(materiaRepositroy.existsByName(anyString())).thenReturn(true);
 
 

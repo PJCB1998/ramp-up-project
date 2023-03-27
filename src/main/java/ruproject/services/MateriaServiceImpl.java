@@ -8,6 +8,7 @@ import ruproject.api.v1.model.MateriaDTO;
 import ruproject.domain.Carrera;
 import ruproject.domain.Contenido;
 import ruproject.domain.Materia;
+import ruproject.exception.CarreraNotFoundException;
 import ruproject.exception.ContenidoNotFoundException;
 import ruproject.exception.MateriaNotFoundException;
 import ruproject.repositories.CarreraRepository;
@@ -47,7 +48,7 @@ public class MateriaServiceImpl implements MateriaService {
 
     @Override
     public MateriaDTO getMateriaByName(String name) {
-        return materiaMapper.materiaToMateriaDTO(materiaRepositroy.findByName(name), new CycleAvoidingMappingContext());
+        return materiaMapper.materiaToMateriaDTO(materiaRepositroy.findByName(name).orElseThrow(()-> new MateriaNotFoundException(name)), new CycleAvoidingMappingContext());
     }
 
     @Override
@@ -60,7 +61,7 @@ public class MateriaServiceImpl implements MateriaService {
     @Override
     public MateriaDTO updateMateria(String name, MateriaDTO materiaDTO) {
         if(existsByName(name)) {
-            Materia savedMateria = materiaRepositroy.findByName(materiaDTO.getName());
+            Materia savedMateria = materiaRepositroy.findByName(materiaDTO.getName()).orElseThrow(()-> new MateriaNotFoundException(name));
             Materia materia = materiaMapper.materiaDTOToMateria(materiaDTO, new CycleAvoidingMappingContext());
             materia.setName(savedMateria.getName());
             materia.setId(savedMateria.getId());
@@ -78,7 +79,7 @@ public class MateriaServiceImpl implements MateriaService {
                 carreraList.addAll(returnCarreras
                         .stream()
                         .filter(carrera -> carreraRepository.existsByName(carrera.getName()))
-                        .map(carrera -> carreraRepository.findByName(carrera.getName()))
+                        .map(carrera -> carreraRepository.findByName(carrera.getName()).orElseThrow(()-> new CarreraNotFoundException(carrera.getName())))
                         .collect(Collectors.toList()));
 
                 materia.setCarreras(carreraList);

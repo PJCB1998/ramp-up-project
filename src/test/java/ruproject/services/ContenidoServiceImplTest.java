@@ -16,6 +16,7 @@ import ruproject.repositories.MateriaRepositroy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -51,7 +52,7 @@ class ContenidoServiceImplTest {
         materia.setContenidos(contenidos);
 
         when(materiaRepositroy.existsByName(anyString())).thenReturn(true);
-        when(materiaRepositroy.findByName(anyString())).thenReturn(materia);
+        when(materiaRepositroy.findByName(anyString())).thenReturn(Optional.of(materia));
 
         List<ContenidoDTO> contenidoDTOList = contenidoService.getAllContenidosFromMateria("Fisica");
 
@@ -72,7 +73,7 @@ class ContenidoServiceImplTest {
         materia.setContenidos(contenidos);
 
         when(materiaRepositroy.existsByName(anyString())).thenReturn(true);
-        when(materiaRepositroy.findByName(anyString())).thenReturn(materia);
+        when(materiaRepositroy.findByName(anyString())).thenReturn(Optional.of(materia));
         when(contenidoRepositroy.findContenidoByIdAndMateriaId(anyLong(),anyLong())).thenReturn(contenido);
 
         ContenidoDTO contenidoDTO = contenidoService.getContenidoById(ID,"Fisica");
@@ -90,7 +91,7 @@ class ContenidoServiceImplTest {
         materia.setName("Fisica");
 
         when(contenidoRepositroy.save(any(Contenido.class))).then(returnsFirstArg());
-        when(materiaRepositroy.findByName(anyString())).thenReturn(materia);
+        when(materiaRepositroy.findByName(anyString())).thenReturn(Optional.of(materia));
 
         ContenidoDTO contenidoDTO1 = contenidoService.saveContenido(contenidoDTO,materia.getName());
 

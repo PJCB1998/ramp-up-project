@@ -66,7 +66,7 @@ class MateriaServiceImplTest {
         materia.setName(NAME);
         materia.setId(ID);
 
-        when(materiaRepositroy.findByName(anyString())).thenReturn(materia);
+        when(materiaRepositroy.findByName(anyString())).thenReturn(Optional.of(materia));
 
         MateriaDTO materiaDTO = materiaService.getMateriaByName(NAME);
 
@@ -128,9 +128,9 @@ class MateriaServiceImplTest {
 
         when(materiaRepositroy.save(any(Materia.class))).then(returnsFirstArg());
         when(materiaRepositroy.existsByName(anyString())).thenReturn(true);
-        when(materiaRepositroy.findByName(anyString())).thenReturn(savedMateria);
+        when(materiaRepositroy.findByName(anyString())).thenReturn(Optional.of(savedMateria));
         when(carreraRepository.existsByName(anyString())).thenReturn(true);
-        when(carreraRepository.findByName(anyString())).thenReturn(savedCarrera);
+        when(carreraRepository.findByName(anyString())).thenReturn(Optional.of(savedCarrera));
         when(contenidoRepositroy.existsById(anyLong())).thenReturn(true);
         when(contenidoRepositroy.findById(anyLong())).thenReturn(Optional.of(savedContenido));
 

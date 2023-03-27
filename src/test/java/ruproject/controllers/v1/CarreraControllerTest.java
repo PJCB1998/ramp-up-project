@@ -16,15 +16,21 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import ruproject.api.v1.model.CarreraDTO;
+import ruproject.domain.Carrera;
+import ruproject.exception.CarreraNotFoundException;
+import ruproject.repositories.CarreraRepository;
 import ruproject.services.CarreraService;
 
 
+import java.lang.reflect.Executable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -39,6 +45,9 @@ class CarreraControllerTest {
 
     @Mock
     CarreraService carreraService;
+
+    @Mock
+    CarreraRepository carreraRepository;
 
     @InjectMocks
     CarreraController carreraController;
@@ -150,6 +159,13 @@ class CarreraControllerTest {
                 .andExpect(status().isNoContent());
 
         verify(carreraService).deleteCarrera(anyString());
+
+    }
+
+    @Test
+    void Add_Carrear_Test_CarreraNotFound_Exception_Http_404() throws Exception{
+
+
 
     }
 
