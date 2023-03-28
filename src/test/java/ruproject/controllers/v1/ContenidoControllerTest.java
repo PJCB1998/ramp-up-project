@@ -14,6 +14,7 @@ import ruproject.api.v1.model.ContenidoDTO;
 import ruproject.api.v1.model.MateriaDTO;
 import ruproject.exception.ContenidoControllerAdvisor;
 import ruproject.exception.ContenidoNotFoundException;
+import ruproject.exception.GlobalControllerAdvisor;
 import ruproject.services.ContenidoService;
 
 import java.util.Arrays;
@@ -45,7 +46,7 @@ class ContenidoControllerTest {
     @BeforeEach
     public void setup(){
         MockitoAnnotations.openMocks(this);
-        this.mvc = MockMvcBuilders.standaloneSetup(contenidoController).setControllerAdvice(new ContenidoControllerAdvisor()).build();
+        this.mvc = MockMvcBuilders.standaloneSetup(contenidoController).setControllerAdvice(new ContenidoControllerAdvisor(),new GlobalControllerAdvisor()).build();
     }
 
     @Test
@@ -156,6 +157,22 @@ class ContenidoControllerTest {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof ContenidoNotFoundException))
                 .andExpect(jsonPath("$.message").value("Contendio Not Found"));
 
+
+    }
+
+    @Test
+    void Test_InvalidArgument_Exception_Http_422() throws Exception{
+
+        ContenidoDTO contenidoDTO = new ContenidoDTO();
+        contenidoDTO.setId(ID);
+        contenidoDTO.setMateria(new MateriaDTO());
+
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/api/v1/materias/materia/contenidos/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(contenidoDTO)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
 
     }
 

@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ruproject.api.v1.model.MateriaDTO;
+import ruproject.exception.GlobalControllerAdvisor;
 import ruproject.exception.MateriaControllerAdvisor;
 import ruproject.exception.MateriaNotFoundException;
 import ruproject.services.MateriaService;
@@ -44,7 +45,7 @@ class MateriaControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        this.mvc= MockMvcBuilders.standaloneSetup(materiaController).setControllerAdvice(new MateriaControllerAdvisor()).build();
+        this.mvc= MockMvcBuilders.standaloneSetup(materiaController).setControllerAdvice(new MateriaControllerAdvisor(), new GlobalControllerAdvisor()).build();
     }
 
     @Test //Test GET Materias
@@ -160,6 +161,22 @@ class MateriaControllerTest {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof MateriaNotFoundException))
                 .andExpect(jsonPath("$.message").value("Materia Not Found"));
 
+
+    }
+
+
+    @Test
+    void Test_InvalidArgument_Exception_Http_422() throws Exception{
+
+        MateriaDTO materiaDTO = new MateriaDTO();
+        materiaDTO.setId(1L);
+
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/api/v1/materias/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(materiaDTO)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
 
     }
 

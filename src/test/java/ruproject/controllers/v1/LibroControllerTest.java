@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ruproject.api.v1.model.LibroDTO;
+import ruproject.exception.GlobalControllerAdvisor;
 import ruproject.exception.LibroControllerAdvisor;
 import ruproject.exception.LibroNotFoundException;
 import ruproject.services.LibroService;
@@ -44,7 +45,7 @@ class LibroControllerTest {
     @BeforeEach
     public void setup(){
         MockitoAnnotations.openMocks(this);
-        this.mvc = MockMvcBuilders.standaloneSetup(libroController).setControllerAdvice(new LibroControllerAdvisor()).build();
+        this.mvc = MockMvcBuilders.standaloneSetup(libroController).setControllerAdvice(new LibroControllerAdvisor(),new GlobalControllerAdvisor()).build();
     }
 
     @Test
@@ -215,6 +216,22 @@ class LibroControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof LibroNotFoundException))
                 .andExpect(jsonPath("$.message").value("Libro Not Found"));
+
+    }
+
+    @Test
+    void Test_InvalidArgument_Exception_Http_422() throws Exception{
+
+        LibroDTO libroDTO = new LibroDTO();
+        libroDTO.setId(ID);
+        libroDTO.setAutor("Autor");
+
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/api/v1/libros/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(libroDTO)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
 
     }
 

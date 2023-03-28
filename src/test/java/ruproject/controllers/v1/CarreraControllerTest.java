@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ruproject.api.v1.model.CarreraDTO;
 import ruproject.exception.CarreraControllerAdvisor;
 import ruproject.exception.CarreraNotFoundException;
+import ruproject.exception.GlobalControllerAdvisor;
 import ruproject.services.CarreraService;
 
 
@@ -53,7 +54,7 @@ class CarreraControllerTest {
     @BeforeEach
     public void setup(){
         MockitoAnnotations.openMocks(this);
-        this.mvc = MockMvcBuilders.standaloneSetup(carreraController).setControllerAdvice(new CarreraControllerAdvisor()).build();
+        this.mvc = MockMvcBuilders.standaloneSetup(carreraController).setControllerAdvice(new CarreraControllerAdvisor(),new GlobalControllerAdvisor()).build();
     }
 
     @Test // Used to test GET All Carreras
@@ -170,6 +171,21 @@ class CarreraControllerTest {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof CarreraNotFoundException))
                 .andExpect(jsonPath("$.message").value("Carrera Not Found"));
 
+
+    }
+
+    @Test
+    void Test_InvalidArgument_Exception_Http_422() throws Exception{
+
+        CarreraDTO carreraDTO = new CarreraDTO();
+        carreraDTO.setId(1L);
+
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/api/v1/carreras/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(carreraDTO)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
 
     }
 
