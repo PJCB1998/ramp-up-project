@@ -6,6 +6,9 @@ import ruproject.api.v1.mapper.LibroMapper;
 import ruproject.api.v1.model.LibroDTO;
 import ruproject.domain.Contenido;
 import ruproject.domain.Libro;
+import ruproject.exception.ContenidoNotFoundException;
+import ruproject.exception.LibroNotFoundException;
+import ruproject.exception.MateriaNotFoundException;
 import ruproject.repositories.ContenidoRepositroy;
 import ruproject.repositories.LibroRepository;
 import ruproject.repositories.MateriaRepositroy;
@@ -39,14 +42,16 @@ public class LibroServiceImpl implements LibroService {
 
         if(contenidoRepositroy.existsById(contenido_id)){
             return contenidoRepositroy
-                    .findContenidoByIdAndMateriaId(contenido_id, materiaRepositroy.findByName(name).getId())
+                    .findContenidoByIdAndMateriaId(contenido_id, materiaRepositroy.findByName(name)
+                            .orElseThrow(()-> new MateriaNotFoundException(name))
+                            .getId()).orElseThrow(()-> new ContenidoNotFoundException(contenido_id))
                     .getLibros()
                     .stream()
                     .map(libro -> libroMapper.libroToLibroDTO(libro,new CycleAvoidingMappingContext()))
                     .collect(Collectors.toList());
         }
 
-        throw new RuntimeException("Materia Not Found");
+        throw new MateriaNotFoundException(name);
 
     }
 
@@ -55,12 +60,15 @@ public class LibroServiceImpl implements LibroService {
         if(materiaRepositroy.existsByName(name)){
 
             return libroMapper.libroToLibroDTO(
-                            libroRepository.findLibroByIdAndContenidoIdAndMateriaId(id,contenido_id,materiaRepositroy.findByName(name).getId())
+                            libroRepository.findLibroByIdAndContenidoIdAndMateriaId(id,contenido_id,materiaRepositroy
+                                            .findByName(name)
+                                            .orElseThrow(()-> new MateriaNotFoundException(name)).getId())
+                                    .orElseThrow(()-> new LibroNotFoundException(id))
                             , new CycleAvoidingMappingContext());
 
         }
 
-        throw (new RuntimeException("Materia Not Found"));
+        throw new MateriaNotFoundException(name);
     }
 
     @Override
@@ -76,7 +84,7 @@ public class LibroServiceImpl implements LibroService {
     @Override
     public LibroDTO getLibroById(Long id){
 
-        return libroMapper.libroToLibroDTO(libroRepository.findById(id).orElseThrow(()-> new RuntimeException("Libro Not Found")), new CycleAvoidingMappingContext());
+        return libroMapper.libroToLibroDTO(libroRepository.findById(id).orElseThrow(()-> new LibroNotFoundException(id)), new CycleAvoidingMappingContext());
 
     }
 
@@ -92,7 +100,7 @@ public class LibroServiceImpl implements LibroService {
 
         if(exsitsById(id)){
 
-            Libro savedLibro = libroRepository.findById(id).orElseThrow(()-> new RuntimeException("Libro not found"));
+            Libro savedLibro = libroRepository.findById(id).orElseThrow(()-> new LibroNotFoundException(id));
             Libro retrunLibro = libroMapper.libroDTOTOLibro(libroDTO,new CycleAvoidingMappingContext());
 
             retrunLibro.setId(savedLibro.getId());
@@ -114,7 +122,7 @@ public class LibroServiceImpl implements LibroService {
                 contenidos.addAll(retrunContenidos
                         .stream()
                         .filter(contenido -> contenidoRepositroy.existsById(contenido.getId()))
-                        .map(contenido -> contenidoRepositroy.findById(contenido.getId()).orElseThrow(()-> new RuntimeException("Contenido not found")))
+                        .map(contenido -> contenidoRepositroy.findById(contenido.getId()).orElseThrow(()-> new ContenidoNotFoundException(contenido.getId())))
                         .collect(Collectors.toList()));
 
 
@@ -130,7 +138,7 @@ public class LibroServiceImpl implements LibroService {
 
         }
 
-        throw new IllegalArgumentException("Libro with id: " + id + " not found" );
+        throw new LibroNotFoundException(id);
 
 
     }

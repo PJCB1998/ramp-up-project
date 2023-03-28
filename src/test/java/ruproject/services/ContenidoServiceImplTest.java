@@ -9,6 +9,7 @@ import ruproject.api.v1.mapper.MateriaMapper;
 import ruproject.api.v1.model.ContenidoDTO;
 import ruproject.domain.Contenido;
 import ruproject.domain.Materia;
+import ruproject.exception.ContenidoNotFoundException;
 import ruproject.repositories.ContenidoRepositroy;
 import ruproject.repositories.LibroRepository;
 import ruproject.repositories.MateriaRepositroy;
@@ -16,6 +17,7 @@ import ruproject.repositories.MateriaRepositroy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -51,7 +53,7 @@ class ContenidoServiceImplTest {
         materia.setContenidos(contenidos);
 
         when(materiaRepositroy.existsByName(anyString())).thenReturn(true);
-        when(materiaRepositroy.findByName(anyString())).thenReturn(materia);
+        when(materiaRepositroy.findByName(anyString())).thenReturn(Optional.of(materia));
 
         List<ContenidoDTO> contenidoDTOList = contenidoService.getAllContenidosFromMateria("Fisica");
 
@@ -72,8 +74,8 @@ class ContenidoServiceImplTest {
         materia.setContenidos(contenidos);
 
         when(materiaRepositroy.existsByName(anyString())).thenReturn(true);
-        when(materiaRepositroy.findByName(anyString())).thenReturn(materia);
-        when(contenidoRepositroy.findContenidoByIdAndMateriaId(anyLong(),anyLong())).thenReturn(contenido);
+        when(materiaRepositroy.findByName(anyString())).thenReturn(Optional.of(materia));
+        when(contenidoRepositroy.findContenidoByIdAndMateriaId(anyLong(),anyLong())).thenReturn(Optional.of(contenido));
 
         ContenidoDTO contenidoDTO = contenidoService.getContenidoById(ID,"Fisica");
 
@@ -90,7 +92,7 @@ class ContenidoServiceImplTest {
         materia.setName("Fisica");
 
         when(contenidoRepositroy.save(any(Contenido.class))).then(returnsFirstArg());
-        when(materiaRepositroy.findByName(anyString())).thenReturn(materia);
+        when(materiaRepositroy.findByName(anyString())).thenReturn(Optional.of(materia));
 
         ContenidoDTO contenidoDTO1 = contenidoService.saveContenido(contenidoDTO,materia.getName());
 
@@ -106,6 +108,23 @@ class ContenidoServiceImplTest {
         contenidoService.deleteContenido(ID);
 
         verify(contenidoRepositroy, times(1)).deleteById(ID);
+
+    }
+
+    @Test
+    void ContenidoNotFound_Exception_Assert_Throw(){
+
+        Materia materia = new Materia();
+        materia.setName("Fisica");
+        materia.setId(ID);
+
+        when(materiaRepositroy.findByName(anyString())).thenReturn(Optional.of(materia));
+
+        ContenidoNotFoundException exception = assertThrows(ContenidoNotFoundException.class, () -> {
+            contenidoService.getContenidoById(ID, "Fisica");
+        });
+
+        assertTrue(exception.getMessage().equals("Contenido with Id: 1 not found"));
 
     }
 }

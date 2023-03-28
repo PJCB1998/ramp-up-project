@@ -14,21 +14,25 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
 import ruproject.api.v1.model.CarreraDTO;
+import ruproject.exception.CarreraControllerAdvisor;
+import ruproject.exception.CarreraNotFoundException;
+import ruproject.exception.GlobalControllerAdvisor;
 import ruproject.services.CarreraService;
+
 
 
 import java.util.Arrays;
 import java.util.List;
 
 
+
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -40,6 +44,7 @@ class CarreraControllerTest {
     @Mock
     CarreraService carreraService;
 
+
     @InjectMocks
     CarreraController carreraController;
 
@@ -49,7 +54,7 @@ class CarreraControllerTest {
     @BeforeEach
     public void setup(){
         MockitoAnnotations.openMocks(this);
-        this.mvc = MockMvcBuilders.standaloneSetup(carreraController).build();
+        this.mvc = MockMvcBuilders.standaloneSetup(carreraController).setControllerAdvice(new CarreraControllerAdvisor(),new GlobalControllerAdvisor()).build();
     }
 
     @Test // Used to test GET All Carreras
@@ -152,6 +157,38 @@ class CarreraControllerTest {
         verify(carreraService).deleteCarrera(anyString());
 
     }
+
+    @Test
+    void Test_CarreraNotFound_Exception_Http_404() throws Exception{
+
+        when(carreraService.getCarreraByName(anyString())).thenThrow(new CarreraNotFoundException(NAME));
+
+        mvc.perform(MockMvcRequestBuilders
+                .get("/api/v1/carreras/Ingenieria/")
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof CarreraNotFoundException))
+                .andExpect(jsonPath("$.message").value("Carrera with Name: Ingenieria not found"));
+
+
+    }
+
+    @Test
+    void Test_InvalidArgument_Exception_Http_422() throws Exception{
+
+        CarreraDTO carreraDTO = new CarreraDTO();
+        carreraDTO.setId(1L);
+
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/api/v1/carreras/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(carreraDTO)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+
+    }
+
 
     public static String asJsonString(final Object obj) {
         try {

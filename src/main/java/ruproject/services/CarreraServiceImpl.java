@@ -7,6 +7,8 @@ import ruproject.api.v1.mapper.CycleAvoidingMappingContext;
 import ruproject.api.v1.model.CarreraDTO;
 import ruproject.domain.Carrera;
 import ruproject.domain.Materia;
+import ruproject.exception.CarreraNotFoundException;
+import ruproject.exception.MateriaNotFoundException;
 import ruproject.repositories.CarreraRepository;
 import ruproject.repositories.MateriaRepositroy;
 
@@ -41,7 +43,7 @@ public class CarreraServiceImpl implements CarreraService {
 
     @Override
     public CarreraDTO getCarreraByName(String name) {
-        return carreraMapper.carreraToCarreaDTO(carreraRepository.findByName(name), new CycleAvoidingMappingContext());
+        return carreraMapper.carreraToCarreaDTO(carreraRepository.findByName(name).orElseThrow(()-> new CarreraNotFoundException(name)), new CycleAvoidingMappingContext());
     }
 
     @Override
@@ -53,7 +55,7 @@ public class CarreraServiceImpl implements CarreraService {
     @Override
     public CarreraDTO updateCarrera(String name, CarreraDTO carreraDTO) {
         if (existsByName(name)) {
-            Carrera savedCarrera = carreraRepository.findByName(name);
+            Carrera savedCarrera = carreraRepository.findByName(name).orElseThrow(()-> new CarreraNotFoundException(name));
             Carrera returnCarrera = carreraMapper.carreraDTOtoCarrera(carreraDTO,new CycleAvoidingMappingContext());
             returnCarrera.setName(savedCarrera.getName());
             returnCarrera.setId(savedCarrera.getId());
@@ -71,7 +73,7 @@ public class CarreraServiceImpl implements CarreraService {
               materias.addAll(returnCarreraMaterias
                         .stream()
                         .filter(materia -> materiaRepositroy.existsByName(materia.getName()))
-                        .map(materia -> materiaRepositroy.findByName(materia.getName()))
+                        .map(materia -> materiaRepositroy.findByName(materia.getName()).orElseThrow(()-> new MateriaNotFoundException(materia.getName())))
                         .collect(Collectors.toList()));
 
                 returnCarrera.setMaterias(materias);
@@ -89,7 +91,7 @@ public class CarreraServiceImpl implements CarreraService {
 
 
 
-        throw new IllegalArgumentException("Carrera with name:" + name + " not found");
+        throw new CarreraNotFoundException(name);
 
     }
 

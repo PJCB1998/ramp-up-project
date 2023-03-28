@@ -1,6 +1,7 @@
 package ruproject.controllers.v1;
 
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ruproject.api.v1.model.LibroDTO;
@@ -46,13 +47,13 @@ public class LibroController {
 
     @PostMapping("/api/v1/libros/")
     @ResponseStatus(HttpStatus.CREATED)
-    public LibroDTO createLibro(@RequestBody LibroDTO libroDTO){
+    public LibroDTO createLibro(@Valid @RequestBody LibroDTO libroDTO){
         return libroService.saveLibro(libroDTO);
     }
 
     @PutMapping("/api/v1/libros/{id}/")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public LibroDTO updateLibro(@PathVariable Long id, @RequestBody LibroDTO libroDTO ){
+    public LibroDTO updateLibro(@PathVariable Long id,@Valid @RequestBody LibroDTO libroDTO ){
 
         return libroService.updateLibro(id,libroDTO);
 

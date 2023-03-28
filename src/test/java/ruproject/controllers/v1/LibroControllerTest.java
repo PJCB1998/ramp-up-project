@@ -11,6 +11,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ruproject.api.v1.model.LibroDTO;
+import ruproject.exception.GlobalControllerAdvisor;
+import ruproject.exception.LibroControllerAdvisor;
+import ruproject.exception.LibroNotFoundException;
 import ruproject.services.LibroService;
 
 import java.util.Arrays;
@@ -18,6 +21,7 @@ import java.util.List;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -41,7 +45,7 @@ class LibroControllerTest {
     @BeforeEach
     public void setup(){
         MockitoAnnotations.openMocks(this);
-        this.mvc = MockMvcBuilders.standaloneSetup(libroController).build();
+        this.mvc = MockMvcBuilders.standaloneSetup(libroController).setControllerAdvice(new LibroControllerAdvisor(),new GlobalControllerAdvisor()).build();
     }
 
     @Test
@@ -49,9 +53,13 @@ class LibroControllerTest {
 
         LibroDTO libroDTO = new LibroDTO();
         libroDTO.setId(ID);
+        libroDTO.setAutor("Autor");
+        libroDTO.setTitulo("Titulo");
 
         LibroDTO libroDTO2 = new LibroDTO();
         libroDTO2.setId(2L);
+        libroDTO.setAutor("Autor");
+        libroDTO.setTitulo("Titulo");
 
         List<LibroDTO>  libroDTOList = Arrays.asList(libroDTO,libroDTO2);
 
@@ -70,6 +78,8 @@ class LibroControllerTest {
 
         LibroDTO libroDTO = new LibroDTO();
         libroDTO.setId(ID);
+        libroDTO.setAutor("Autor");
+        libroDTO.setTitulo("Titulo");
 
 
         when(libroService.getLibroById(anyLong())).thenReturn(libroDTO);
@@ -88,10 +98,14 @@ class LibroControllerTest {
 
         LibroDTO libroDTO = new LibroDTO();
         libroDTO.setId(ID);
+        libroDTO.setAutor("Autor");
+        libroDTO.setTitulo("Titulo");
 
 
         LibroDTO libroDTO2 = new LibroDTO();
         libroDTO2.setId(2L);
+        libroDTO.setAutor("Autor");
+        libroDTO.setTitulo("Titulo");
 
         List<LibroDTO>  libroDTOList = Arrays.asList(libroDTO,libroDTO2);
 
@@ -111,6 +125,8 @@ class LibroControllerTest {
 
         LibroDTO libroDTO = new LibroDTO();
         libroDTO.setId(ID);
+        libroDTO.setAutor("Autor");
+        libroDTO.setTitulo("Titulo");
 
 
         when(libroService.getLibroByIdFromContenido(anyLong(),anyLong(),anyString())).thenReturn(libroDTO);
@@ -130,6 +146,8 @@ class LibroControllerTest {
 
         LibroDTO libroDTO = new LibroDTO();
         libroDTO.setId(ID);
+        libroDTO.setAutor("Autor");
+        libroDTO.setTitulo("Titulo");
 
 
 
@@ -151,6 +169,8 @@ class LibroControllerTest {
 
         LibroDTO libroDTO = new LibroDTO();
         libroDTO.setId(ID);
+        libroDTO.setAutor("Autor");
+        libroDTO.setTitulo("Titulo");
 
 
 
@@ -176,6 +196,42 @@ class LibroControllerTest {
 
         verify(libroService).deleteLibro(anyLong());
 
+
+    }
+
+    @Test
+    void Test_LibroNotFound_Exception() throws Exception{
+
+        LibroDTO libroDTO = new LibroDTO();
+        libroDTO.setId(ID);
+        libroDTO.setAutor("Autor");
+        libroDTO.setTitulo("Titulo");
+
+        when(libroService.getLibroById(anyLong())).thenThrow(new LibroNotFoundException(ID));
+
+        mvc.perform(MockMvcRequestBuilders
+                        .get("/api/v1/libros/1/")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof LibroNotFoundException))
+                .andExpect(jsonPath("$.message").value("Libro with Id: 1 not found"));
+
+    }
+
+    @Test
+    void Test_InvalidArgument_Exception_Http_422() throws Exception{
+
+        LibroDTO libroDTO = new LibroDTO();
+        libroDTO.setId(ID);
+        libroDTO.setAutor("Autor");
+
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/api/v1/libros/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(libroDTO)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
 
     }
 

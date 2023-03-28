@@ -8,6 +8,9 @@ import ruproject.api.v1.model.ContenidoDTO;
 import ruproject.domain.Contenido;
 import ruproject.domain.Libro;
 import ruproject.domain.Materia;
+import ruproject.exception.ContenidoNotFoundException;
+import ruproject.exception.LibroNotFoundException;
+import ruproject.exception.MateriaNotFoundException;
 import ruproject.repositories.ContenidoRepositroy;
 import ruproject.repositories.LibroRepository;
 import ruproject.repositories.MateriaRepositroy;
@@ -42,13 +45,13 @@ public class ContenidoServiceImpl implements ContenidoService {
     public List<ContenidoDTO> getAllContenidosFromMateria(String name) {
         if(materiaRepositroy.existsByName(name)){
             return materiaRepositroy
-                .findByName(name)
+                .findByName(name).orElseThrow(()-> new MateriaNotFoundException(name))
                 .getContenidos()
                 .stream()
                 .map(contenido -> contenidoMapper.contenidoToContendidoDTO(contenido, new CycleAvoidingMappingContext()))
                 .collect(Collectors.toList());
         }
-        throw new RuntimeException("Materia With Name:" + name + " not found");
+        throw new MateriaNotFoundException(name);
     }
 
     @Override
@@ -80,12 +83,13 @@ public class ContenidoServiceImpl implements ContenidoService {
         Long materia_id;
 
         if(materiaRepositroy.existsByName(name)){
-            materia_id = materiaRepositroy.findByName(name).getId();
-            return contenidoMapper.contenidoToContendidoDTO(contenidoRepositroy.findContenidoByIdAndMateriaId(id,materia_id), new CycleAvoidingMappingContext());
+            materia_id = materiaRepositroy.findByName(name).orElseThrow(()-> new MateriaNotFoundException(name)).getId();
+            return contenidoMapper.contenidoToContendidoDTO(contenidoRepositroy
+                    .findContenidoByIdAndMateriaId(id,materia_id).orElseThrow(()-> new ContenidoNotFoundException(id)), new CycleAvoidingMappingContext());
 
         }
 
-        throw new RuntimeException("Materia with Name:" + name + " not found");
+        throw new MateriaNotFoundException(name);
 
 
     }
@@ -93,7 +97,7 @@ public class ContenidoServiceImpl implements ContenidoService {
     @Override
     public ContenidoDTO saveContenido(ContenidoDTO contenidoDTO, String name) {
         Contenido contenido = contenidoMapper.contenidoDTOToContenido(contenidoDTO, new CycleAvoidingMappingContext());
-        Materia materia = materiaRepositroy.findByName(name);
+        Materia materia = materiaRepositroy.findByName(name).orElseThrow(()-> new MateriaNotFoundException(name));
         contenido.setMateria(materia);
         return contenidoMapper.contenidoToContendidoDTO(contenidoRepositroy.save(contenido), new CycleAvoidingMappingContext());
     }
@@ -104,13 +108,17 @@ public class ContenidoServiceImpl implements ContenidoService {
 
         if(existsById(id) && materiaRepositroy
                 .findByName(name)
+                .orElseThrow(()-> new MateriaNotFoundException(name))
                 .getContenidos()
                 .stream()
                 .map(Contenido::getId).collect(Collectors.toList()).contains(id)){
 
             Contenido contenido = contenidoMapper.contenidoDTOToContenido(contenidoDTO, new CycleAvoidingMappingContext());
 
-            Contenido savedContenido = contenidoRepositroy.findContenidoByIdAndMateriaId(id, materiaRepositroy.findByName(name).getId());
+            Contenido savedContenido = contenidoRepositroy.findContenidoByIdAndMateriaId(id, materiaRepositroy
+                            .findByName(name)
+                            .orElseThrow(()-> new MateriaNotFoundException((name))).getId())
+                    .orElseThrow(()-> new ContenidoNotFoundException(id));
 
             contenido.setId(savedContenido.getId());
 
@@ -142,7 +150,7 @@ public class ContenidoServiceImpl implements ContenidoService {
                         .stream()
                         .filter(libro -> libroRepository.existsById(libro.getId()))
                         .map(libro -> libroRepository
-                                .findById(libro.getId()).orElseThrow(()->new RuntimeException("Libro Not Found")))
+                                .findById(libro.getId()).orElseThrow(()->new LibroNotFoundException(libro.getId())))
                         .collect(Collectors.toList()));
 
                 contenido.setLibros(libros);
@@ -156,7 +164,7 @@ public class ContenidoServiceImpl implements ContenidoService {
 
         }
 
-        throw new IllegalArgumentException("No Contenido with id:" + id + " found");
+        throw new ContenidoNotFoundException(id);
 
     }
 

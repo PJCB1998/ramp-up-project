@@ -10,6 +10,7 @@ import ruproject.api.v1.model.LibroDTO;
 import ruproject.domain.Contenido;
 import ruproject.domain.Libro;
 import ruproject.domain.Materia;
+import ruproject.exception.LibroNotFoundException;
 import ruproject.repositories.ContenidoRepositroy;
 import ruproject.repositories.LibroRepository;
 import ruproject.repositories.MateriaRepositroy;
@@ -70,8 +71,8 @@ class LibroServiceImplTest {
         materia.setId(1L);
 
         when(contenidoRepositroy.existsById(anyLong())).thenReturn(true);
-        when(contenidoRepositroy.findContenidoByIdAndMateriaId(anyLong(),anyLong())).thenReturn(contenido);
-        when(materiaRepositroy.findByName(anyString())).thenReturn(materia);
+        when(contenidoRepositroy.findContenidoByIdAndMateriaId(anyLong(),anyLong())).thenReturn(Optional.of(contenido));
+        when(materiaRepositroy.findByName(anyString())).thenReturn(Optional.of(materia));
 
         List<LibroDTO> libroDTOS = libroService.getAllLibrosFromContenido(contenido.getId(),materia.getName());
 
@@ -103,8 +104,8 @@ class LibroServiceImplTest {
         materia.setId(1L);
 
         when(materiaRepositroy.existsByName(anyString())).thenReturn(true);
-        when(materiaRepositroy.findByName(anyString())).thenReturn(materia);
-        when(libroRepository.findLibroByIdAndContenidoIdAndMateriaId(anyLong(),anyLong(),anyLong())).thenReturn(libro);
+        when(materiaRepositroy.findByName(anyString())).thenReturn(Optional.of(materia));
+        when(libroRepository.findLibroByIdAndContenidoIdAndMateriaId(anyLong(),anyLong(),anyLong())).thenReturn(Optional.of(libro));
 
         LibroDTO libroDTO = libroService.getLibroByIdFromContenido(libro.getId(), contenido.getId(),materia.getName());
 
@@ -220,6 +221,18 @@ class LibroServiceImplTest {
         verify(libroRepository,times(1)).deleteById(ID);
 
 
+
+    }
+
+    @Test
+    void LibroNotFound_Exception_AssertThrow(){
+
+
+        LibroNotFoundException exception = assertThrows(LibroNotFoundException.class, () -> {
+            libroService.getLibroById(ID);
+        });
+
+        assertEquals(exception.getMessage(),"Libro with Id: 1 not found");
 
     }
 }
