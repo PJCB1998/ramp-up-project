@@ -11,6 +11,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ruproject.api.v1.model.MateriaDTO;
+import ruproject.exception.MateriaControllerAdvisor;
+import ruproject.exception.MateriaNotFoundException;
 import ruproject.services.MateriaService;
 
 import java.util.Arrays;
@@ -18,6 +20,7 @@ import java.util.List;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -41,7 +44,7 @@ class MateriaControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        this.mvc= MockMvcBuilders.standaloneSetup(materiaController).build();
+        this.mvc= MockMvcBuilders.standaloneSetup(materiaController).setControllerAdvice(new MateriaControllerAdvisor()).build();
     }
 
     @Test //Test GET Materias
@@ -141,6 +144,22 @@ class MateriaControllerTest {
                 .andExpect(status().isNoContent());
 
         verify(materiaService).deleteMateria(anyString());
+
+    }
+
+    @Test
+    void Test_MateriaNotFound_Exception_Http_404() throws Exception{
+
+        when(materiaService.getMateriaByName(anyString())).thenThrow(new MateriaNotFoundException(NAME));
+
+        mvc.perform(MockMvcRequestBuilders
+                        .get("/api/v1/materias/Calculo/")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MateriaNotFoundException))
+                .andExpect(jsonPath("$.message").value("Materia Not Found"));
+
 
     }
 

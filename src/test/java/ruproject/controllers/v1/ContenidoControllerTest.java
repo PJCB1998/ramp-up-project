@@ -11,6 +11,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ruproject.api.v1.model.ContenidoDTO;
+import ruproject.api.v1.model.MateriaDTO;
+import ruproject.exception.ContenidoControllerAdvisor;
+import ruproject.exception.ContenidoNotFoundException;
 import ruproject.services.ContenidoService;
 
 import java.util.Arrays;
@@ -18,6 +21,7 @@ import java.util.List;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
@@ -41,7 +45,7 @@ class ContenidoControllerTest {
     @BeforeEach
     public void setup(){
         MockitoAnnotations.openMocks(this);
-        this.mvc = MockMvcBuilders.standaloneSetup(contenidoController).build();
+        this.mvc = MockMvcBuilders.standaloneSetup(contenidoController).setControllerAdvice(new ContenidoControllerAdvisor()).build();
     }
 
     @Test
@@ -89,6 +93,9 @@ class ContenidoControllerTest {
 
         ContenidoDTO contenidoDTO = new ContenidoDTO();
         contenidoDTO.setId(ID);
+        contenidoDTO.setMateria(new MateriaDTO());
+        contenidoDTO.setCursos(Arrays.asList("Cusro1","Curso2"));
+        contenidoDTO.setExamenes(Arrays.asList("Examen1","Examen2"));
 
 
         when(contenidoService.saveContenido(any(ContenidoDTO.class),anyString())).then(returnsFirstArg());
@@ -109,6 +116,9 @@ class ContenidoControllerTest {
 
         ContenidoDTO contenidoDTO = new ContenidoDTO();
         contenidoDTO.setId(ID);
+        contenidoDTO.setMateria(new MateriaDTO());
+        contenidoDTO.setCursos(Arrays.asList("Cusro1","Curso2"));
+        contenidoDTO.setExamenes(Arrays.asList("Examen1","Examen2"));
 
         when(contenidoService.updateContenido(anyLong(),anyString(),any(ContenidoDTO.class))).thenReturn(contenidoDTO);
 
@@ -131,6 +141,22 @@ class ContenidoControllerTest {
                 .andExpect(status().isNoContent());
 
         verify(contenidoService).deleteContenido(anyLong());
+    }
+
+    @Test
+    void Test_ContenidoNotFound_Exception_Http_404() throws Exception{
+
+        when(contenidoService.getContenidoById(anyLong(),anyString())).thenThrow(new ContenidoNotFoundException(ID));
+
+        mvc.perform(MockMvcRequestBuilders
+                        .get("/api/v1/materias/materia/contenidos/1/")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ContenidoNotFoundException))
+                .andExpect(jsonPath("$.message").value("Contendio Not Found"));
+
+
     }
 
     public static String asJsonString(final Object obj) {
