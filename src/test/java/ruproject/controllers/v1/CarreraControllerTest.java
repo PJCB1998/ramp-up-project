@@ -169,7 +169,7 @@ class CarreraControllerTest {
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof CarreraNotFoundException))
-                .andExpect(jsonPath("$.message").value("Carrera Not Found"));
+                .andExpect(jsonPath("$.message").value("Carrera with Name: Ingenieria not found"));
 
 
     }

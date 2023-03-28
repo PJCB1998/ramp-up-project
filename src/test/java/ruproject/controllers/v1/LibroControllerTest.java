@@ -215,7 +215,7 @@ class LibroControllerTest {
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof LibroNotFoundException))
-                .andExpect(jsonPath("$.message").value("Libro Not Found"));
+                .andExpect(jsonPath("$.message").value("Libro with Id: 1 not found"));
 
     }
 

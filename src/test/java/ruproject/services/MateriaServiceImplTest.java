@@ -11,6 +11,7 @@ import ruproject.api.v1.model.MateriaDTO;
 import ruproject.domain.Carrera;
 import ruproject.domain.Contenido;
 import ruproject.domain.Materia;
+import ruproject.exception.MateriaNotFoundException;
 import ruproject.repositories.CarreraRepository;
 import ruproject.repositories.ContenidoRepositroy;
 import ruproject.repositories.MateriaRepositroy;
@@ -164,4 +165,18 @@ class MateriaServiceImplTest {
 
         verify(materiaRepositroy, times(1)).deleteByName(NAME);
     }
+
+    @Test
+    void MateriaNotFoundException_Assert_Throws(){
+
+        MateriaNotFoundException exception = assertThrows(MateriaNotFoundException.class, ()->{
+
+            materiaService.getMateriaByName(NAME);
+
+        });
+
+        assertEquals(exception.getMessage(),"Materia with Name: Calculo not found");
+
+    }
+
 }

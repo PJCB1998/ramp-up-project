@@ -22,7 +22,7 @@ public class MateriaControllerAdvisor{
 
         Map<String,Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDate.now());
-        body.put("message","Materia Not Found");
+        body.put("message",ex.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
 

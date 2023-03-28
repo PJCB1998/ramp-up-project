@@ -155,7 +155,7 @@ class ContenidoControllerTest {
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof ContenidoNotFoundException))
-                .andExpect(jsonPath("$.message").value("Contendio Not Found"));
+                .andExpect(jsonPath("$.message").value("Contenido with Id: 1 not found"));
 
 
     }

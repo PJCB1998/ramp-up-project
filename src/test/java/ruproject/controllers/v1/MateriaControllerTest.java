@@ -159,7 +159,7 @@ class MateriaControllerTest {
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof MateriaNotFoundException))
-                .andExpect(jsonPath("$.message").value("Materia Not Found"));
+                .andExpect(jsonPath("$.message").value("Materia with Name: Calculo not found"));
 
 
     }

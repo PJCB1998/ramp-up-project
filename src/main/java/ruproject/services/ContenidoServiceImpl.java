@@ -84,7 +84,8 @@ public class ContenidoServiceImpl implements ContenidoService {
 
         if(materiaRepositroy.existsByName(name)){
             materia_id = materiaRepositroy.findByName(name).orElseThrow(()-> new MateriaNotFoundException(name)).getId();
-            return contenidoMapper.contenidoToContendidoDTO(contenidoRepositroy.findContenidoByIdAndMateriaId(id,materia_id), new CycleAvoidingMappingContext());
+            return contenidoMapper.contenidoToContendidoDTO(contenidoRepositroy
+                    .findContenidoByIdAndMateriaId(id,materia_id).orElseThrow(()-> new ContenidoNotFoundException(id)), new CycleAvoidingMappingContext());
 
         }
 
@@ -114,8 +115,10 @@ public class ContenidoServiceImpl implements ContenidoService {
 
             Contenido contenido = contenidoMapper.contenidoDTOToContenido(contenidoDTO, new CycleAvoidingMappingContext());
 
-            Contenido savedContenido = contenidoRepositroy.findContenidoByIdAndMateriaId(id, materiaRepositroy.findByName(name)
-                    .orElseThrow(()-> new MateriaNotFoundException((name))).getId());
+            Contenido savedContenido = contenidoRepositroy.findContenidoByIdAndMateriaId(id, materiaRepositroy
+                            .findByName(name)
+                            .orElseThrow(()-> new MateriaNotFoundException((name))).getId())
+                    .orElseThrow(()-> new ContenidoNotFoundException(id));
 
             contenido.setId(savedContenido.getId());
 

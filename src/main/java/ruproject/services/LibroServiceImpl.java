@@ -42,7 +42,9 @@ public class LibroServiceImpl implements LibroService {
 
         if(contenidoRepositroy.existsById(contenido_id)){
             return contenidoRepositroy
-                    .findContenidoByIdAndMateriaId(contenido_id, materiaRepositroy.findByName(name).orElseThrow(()-> new MateriaNotFoundException(name)).getId())
+                    .findContenidoByIdAndMateriaId(contenido_id, materiaRepositroy.findByName(name)
+                            .orElseThrow(()-> new MateriaNotFoundException(name))
+                            .getId()).orElseThrow(()-> new ContenidoNotFoundException(contenido_id))
                     .getLibros()
                     .stream()
                     .map(libro -> libroMapper.libroToLibroDTO(libro,new CycleAvoidingMappingContext()))
@@ -58,8 +60,10 @@ public class LibroServiceImpl implements LibroService {
         if(materiaRepositroy.existsByName(name)){
 
             return libroMapper.libroToLibroDTO(
-                            libroRepository.findLibroByIdAndContenidoIdAndMateriaId(id,contenido_id,materiaRepositroy.findByName(name)
-                                    .orElseThrow(()-> new MateriaNotFoundException(name)).getId())
+                            libroRepository.findLibroByIdAndContenidoIdAndMateriaId(id,contenido_id,materiaRepositroy
+                                            .findByName(name)
+                                            .orElseThrow(()-> new MateriaNotFoundException(name)).getId())
+                                    .orElseThrow(()-> new LibroNotFoundException(id))
                             , new CycleAvoidingMappingContext());
 
         }

@@ -10,6 +10,7 @@ import ruproject.api.v1.model.CarreraDTO;
 import ruproject.api.v1.model.MateriaDTO;
 import ruproject.domain.Carrera;
 import ruproject.domain.Materia;
+import ruproject.exception.CarreraNotFoundException;
 import ruproject.repositories.CarreraRepository;
 import ruproject.repositories.MateriaRepositroy;
 
@@ -148,6 +149,17 @@ class CarreraServiceTest {
         carreraService.deleteCarrera(NAME);
 
         verify(carreraRepository, times(1)).deleteByName(NAME);
+
+    }
+
+    @Test
+    public void CarreraNotFound_Exception_Assert_Throw(){
+
+        CarreraNotFoundException exception = assertThrows(CarreraNotFoundException.class, ()-> {
+            carreraService.getCarreraByName(NAME);
+        });
+
+        assertTrue(exception.getMessage().equals("Carrera with Name: Ingenieria not found"));
 
     }
 }
