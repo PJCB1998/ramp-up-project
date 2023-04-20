@@ -119,6 +119,7 @@ class ContenidoServiceImplTest {
         materia.setId(ID);
 
         when(materiaRepositroy.findByName(anyString())).thenReturn(Optional.of(materia));
+        when(materiaRepositroy.existsByName(anyString())).thenReturn(true);
 
         ContenidoNotFoundException exception = assertThrows(ContenidoNotFoundException.class, () -> {
             contenidoService.getContenidoById(ID, "Fisica");
